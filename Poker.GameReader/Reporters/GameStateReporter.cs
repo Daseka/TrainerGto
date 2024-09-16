@@ -229,7 +229,7 @@ public class GameStateReporter
             Color when pixelColor.B > pixelColor.R && pixelColor.B > pixelColor.G => CardSuit.Diamond,
             Color when pixelColor.R > pixelColor.B && pixelColor.R > pixelColor.G => CardSuit.Hart,
             Color when pixelColor.G > pixelColor.R && pixelColor.G > pixelColor.B => CardSuit.Club,
-            _ => 0
+            _ => CardSuit.None
         };
 
         int correctCard = 0;
