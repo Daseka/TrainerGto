@@ -8,5 +8,6 @@ namespace Poker.Reader
 {
     public class Class1
     {
+        //placeholder
     }
 }
