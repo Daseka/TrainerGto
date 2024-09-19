@@ -7,4 +7,5 @@ public readonly struct GameData
     public (int cardSymbol, int cardSuit)[] MiddleCards { get; init; }
     public Position Position { get; init; }
     public double PotTotal { get; init; }
+    public bool HasBeenRaised { get; init; }
 }

@@ -27,12 +27,15 @@ internal class Program
         timer.Interval = seconds * 1000;
         timer.AutoReset = false;
 
+        GameStateReporter gameStateReporter = new();
+
         timer.Elapsed += (o, e) =>
         {
             var callingTimer = (o as System.Timers.Timer);
             if (callingTimer != null)
             {
-                StartGrabingSreenCards(new GameStateReporter());
+                
+                StartGrabingSreenCards(gameStateReporter);
                 callingTimer.Start();
             }
         };
@@ -53,8 +56,8 @@ internal class Program
     private static void StartGrabingSreenCards(GameStateReporter gameStateReporter)
     {
         Console.WriteLine($"Grabbing screens for window starting with: {WindowName}");
-        Stopwatch stopwatch = new Stopwatch();
-
+        
+        Stopwatch stopwatch = new();
         stopwatch.Restart();
 
         if (!gameStateReporter.ConnectToGame(WindowName))
@@ -71,14 +74,14 @@ internal class Program
 
         foreach (var middleCard in data.MiddleCards)
         {
-            var value = GetCardString(middleCard);
+            string value = GetCardString(middleCard);
             Console.WriteLine(value);
         }
 
         Console.WriteLine($"{Environment.NewLine}=== Left & Right Cards ===");
-        var leftCard = GetCardString(data.HandCards[0]);
+        string leftCard = GetCardString(data.HandCards[0]);
         Console.WriteLine(leftCard);
-        var rightCard = GetCardString(data.HandCards[1]);
+        string rightCard = GetCardString(data.HandCards[1]);
         Console.WriteLine(rightCard);
 
         Console.WriteLine($"{Environment.NewLine}=== Pot Total ===");

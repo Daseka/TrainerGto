@@ -68,11 +68,6 @@ public class GameStateReporter
         PreLoadTesseractEngine();
     }
 
-    private static void PreLoadTesseractEngine()
-    {
-        using TesseractEngine engine2 = new(@"tessdata", "eng", EngineMode.Default);
-    }
-
     public bool ConnectToGame(string gameName)
     {
         List<nint> visibleWindows = WindowHandles.GetVisibleWindows();
@@ -132,7 +127,7 @@ public class GameStateReporter
             }
         }
 
-        return double.TryParse(callAmount.ToString(), out double result) ? result: 0;
+        return double.TryParse(callAmount.ToString(), out double result) ? result : 0;
     }
 
     private static Position GetPosition(Rect rect, ScreenGrabber screenGrabber)
@@ -211,11 +206,16 @@ public class GameStateReporter
         PerceptualHash hasher = new();
         foreach (FileInfo item in files)
         {
-            int cardValue = int.TryParse(item.Name[0..^4], out int result) ? result: 0;
+            int cardValue = int.TryParse(item.Name[0..^4], out int result) ? result : 0;
             hashes[cardValue] = hasher.Hash(item.FullName);
         }
 
         return hashes;
+    }
+
+    private static void PreLoadTesseractEngine()
+    {
+        using TesseractEngine engine2 = new(@"tessdata", "eng", EngineMode.Default);
     }
 
     private static (int cardSymbol, int cardSuit) RunHashComparison(Bitmap bitmap, Dictionary<int, ulong> cardHashes)
@@ -311,7 +311,7 @@ public class GameStateReporter
     private (int cardSymbol, int cardSuit)[] GetMiddleCards(Rect rect, ScreenGrabber screenGrabber)
     {
         Bitmap[] bitmaps = TakeScreenShotMiddleCards(rect, screenGrabber);
-        (int cardSymbol, int cardSuit)[] cards = new (int , int)[bitmaps.Length];
+        (int cardSymbol, int cardSuit)[] cards = new (int, int)[bitmaps.Length];
 
         for (int i = 0; i < cards.Length; i++)
         {
