@@ -64,6 +64,8 @@ namespace Tests
         {
             var gameData = new GameData
             {
+                SmallBlind = 1,
+                BigBlind = 2,
                 HandCards =
                 [
                     (CardSymbol.Four,CardSuit.Hart),
@@ -168,10 +170,13 @@ namespace Tests
         }
 
         [Fact]
+
         public void WhenHasAceTenOffsuitNotBeenRaised()
         {
             var gameData = new GameData
             {
+                SmallBlind = 1,
+                BigBlind = 2,
                 HandCards =
                 [
                     (CardSymbol.Ace,CardSuit.Diamond),
@@ -226,6 +231,8 @@ namespace Tests
         {
             var gameData = new GameData
             {
+                SmallBlind = 1,
+                BigBlind = 2,
                 HandCards =
                 [
                     (CardSymbol.King,CardSuit.Diamond),

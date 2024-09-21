@@ -62,7 +62,7 @@ internal class Program
 
     private static void StartGrabingSreenCards(GameStateReporter gameStateReporter, StrategyReporter strategyReporter)
     {
-        Console.WriteLine($"Grabbing screens: {WindowName}");
+        Console.WriteLine($"Scanning: {WindowName}");
         
         Stopwatch stopwatch = new();
         stopwatch.Restart();
@@ -77,37 +77,17 @@ internal class Program
         StrategyData strategyData = strategyReporter.GetStrategy(gameData);
 
         Console.Clear();
-
-        //Console.WriteLine($"{Environment.NewLine}=== Middle Cards ===");
-        //foreach (var middleCard in data.MiddleCards)
-        //{
-        //    string value = GetCardString(middleCard);
-        //    Console.WriteLine(value);
-        //}
-
-        //Console.WriteLine($"{Environment.NewLine}=== Left & Right Cards ===");
-        string leftCard = GetCardString(gameData.HandCards[0]);
-        //Console.WriteLine(leftCard);
-        string rightCard = GetCardString(gameData.HandCards[1]);
-        //Console.WriteLine(rightCard);
-
-        //Console.WriteLine($"{Environment.NewLine}=== Pot Total ===");
-        //Console.WriteLine(data.PotTotal);
-
-        //Console.WriteLine($"{Environment.NewLine}=== Call amount ===");
-        //Console.WriteLine(data.CallAmount);
-
-        //Console.WriteLine($"{Environment.NewLine}=== Position ===");
-        //Console.WriteLine(data.Position);
-
+                
         Console.WriteLine($"{Environment.NewLine}=== Bet amounts ===");
         Console.WriteLine(string.Join(' ',gameData.Bets));
 
         Console.WriteLine($"{Environment.NewLine}================");
 
-        Console.WriteLine($"C:{strategyData.Call}%  R:{strategyData.Raise}%  F:{strategyData.Fold}%");
+        WritePercentageLine(strategyData);
         Console.WriteLine($"been raised: {gameData.HasBeenRaised}");
         Console.ForegroundColor = ConsoleColor.Magenta;
+        string leftCard = GetCardString(gameData.HandCards[0]);
+        string rightCard = GetCardString(gameData.HandCards[1]);
         Console.WriteLine($"{leftCard} {Environment.NewLine}{rightCard}");
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}{strategyData.SugestedAction}");
@@ -121,9 +101,39 @@ internal class Program
     private static void WritePercentageLine(StrategyData strategyData)
     {
         Console.Write("C:");
-        if (strategyData.ca)
+        if (strategyData.Call > strategyData.Raise && strategyData.Call > strategyData.Fold)
         {
-
+            Console.ForegroundColor = ConsoleColor.Green;
         }
+        else if (strategyData.Call > 0)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+        }
+        Console.Write($"{strategyData.Call}% ");
+        Console.ResetColor();
+
+        Console.Write("R:");
+        if (strategyData.Raise > strategyData.Call && strategyData.Raise > strategyData.Fold)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+        }
+        else if (strategyData.Raise > 0)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+        }
+        Console.Write($"{strategyData.Raise}% ");
+        Console.ResetColor();
+
+        Console.Write("F:");
+        if (strategyData.Fold > strategyData.Raise && strategyData.Fold> strategyData.Call)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+        }
+        else if (strategyData.Fold > 0)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+        }
+        Console.WriteLine($"{strategyData.Fold}% ");
+        Console.ResetColor();
     }
 }

@@ -29,12 +29,9 @@ public class GameStateReporter
     private const int LeftEdgeToPotTotal = 604;
     private const int LeftEdgeToSmallBlind = 1130;
     private const int LeftEdgeToUnderTheGun = 662;
-    private const string LeftHandCards = "Left cards";
 
-    private const string MiddleCards = "Middle cards";
     private const int PotTotalHeight = 34;
     private const int PotTotalWidth = 260;
-    private const string RightHandCards = "Right cards";
     private const int SpaceBetweenCards = 17;
 
     private const int SymbolAreaHeight = 39;
@@ -71,6 +68,8 @@ public class GameStateReporter
     private readonly Dictionary<int, ulong> _leftHandCardHashes;
     private readonly Dictionary<int, ulong> _middleCardHashes;
     private readonly Dictionary<int, ulong> _rightHandCardHashes;
+    private double _smallBlind;
+    private double _bigBlind;
     private readonly ScreenGrabber _screenGrabber;
 
     private Rect _rect;
@@ -78,9 +77,10 @@ public class GameStateReporter
     public GameStateReporter()
     {
         _screenGrabber = new ScreenGrabber();
-        _middleCardHashes = LoadCardHashes(MiddleCards);
-        _leftHandCardHashes = LoadCardHashes(LeftHandCards);
-        _rightHandCardHashes = LoadCardHashes(RightHandCards);
+        _middleCardHashes = LoadCardHashes(CardImages.MiddleImages);
+        _leftHandCardHashes = LoadCardHashes(CardImages.LeftImages);
+        _rightHandCardHashes = LoadCardHashes(CardImages.RightImages);
+
         PreLoadTesseractEngine();
     }
 
@@ -94,6 +94,8 @@ public class GameStateReporter
             {
                 _rect = WindowHandles.GetWindowRect(handle);
 
+                (_smallBlind, _bigBlind) = GetBlindAmounts(title);
+
                 return true;
             }
         }
@@ -101,10 +103,56 @@ public class GameStateReporter
         return false;
     }
 
+    private static (double smallBlind, double bigBlind) GetBlindAmounts(string name)
+    {
+        bool inSecond = false;
+        string smallBlind = string.Empty;
+        string bigBlind = string.Empty;
+        for (int i = 0; i < name.Length; i++)
+        {
+            char leter = name[i];
+            if (leter == '$' && !inSecond)
+            {
+                i++;
+                while (name[i] != ' ')
+                {
+                    smallBlind += name[i];
+                    i++;
+                }
+                inSecond = true;
+            }
+
+            leter = name[i];
+            if (leter == '$' && inSecond)
+            {
+                i++;
+                while (i < name.Length)
+                {
+                    bigBlind += name[i];
+                    i++;
+                }
+            }
+        }
+
+        if (!double.TryParse(smallBlind, out double small))
+        {
+            Console.Write("Error: Getting small blind");
+        }
+
+        if (!double.TryParse(bigBlind, out double big))
+        {
+            Console.Write("Error: Getting bid blind");
+        }
+
+        return (small, big);
+    }
+
     public GameData GetGameState()
     {
         return new GameData
         {
+            SmallBlind = _smallBlind,
+            BigBlind = _bigBlind,
             MiddleCards = GetMiddleCards(_rect, _screenGrabber),
             HandCards = GetHandCards(_rect, _screenGrabber),
             CallAmount = GetCallAmount(_rect, _screenGrabber),
@@ -112,12 +160,12 @@ public class GameStateReporter
             Position = GetPosition(_rect, _screenGrabber),
             Bets =
             [
-                GetBetSeat(0,LeftEdgeToBetSeat0,TopEdgeToBetSeat0, _rect, _screenGrabber),
-                GetBetSeat(1,LeftEdgeToBetSeat1,TopEdgeToBetSeat1, _rect, _screenGrabber),
-                GetBetSeat(2,LeftEdgeToBetSeat2,TopEdgeToBetSeat2, _rect, _screenGrabber),
-                GetBetSeat(3,LeftEdgeToBetSeat3,TopEdgeToBetSeat3, _rect, _screenGrabber),
-                GetBetSeat(4,LeftEdgeToBetSeat4,TopEdgeToBetSeat4, _rect, _screenGrabber),
-                GetBetSeat(5,LeftEdgeToBetSeat5,TopEdgeToBetSeat5, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat0,TopEdgeToBetSeat0, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat1,TopEdgeToBetSeat1, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat2,TopEdgeToBetSeat2, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat3,TopEdgeToBetSeat3, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat4,TopEdgeToBetSeat4, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat5,TopEdgeToBetSeat5, _rect, _screenGrabber),
             ]
         };
     }
@@ -194,22 +242,18 @@ public class GameStateReporter
 
         y = TopEdgeToCutOff + rect.Top;
         x = LeftEdgeToCutOff + rect.Left;
-        if (TryFindPosition(x, y, screenGrabber))
-        {
-            return Position.CutOff;
-        }
 
-        return Position.None;
+        return TryFindPosition(x, y, screenGrabber) 
+            ? Position.CutOff 
+            : Position.None;
     }
 
-    private static double GetBetSeat(int seat,int left, int top,Rect rect, ScreenGrabber screenGrabber)
+    private static double GetBetSeat(int left, int top,Rect rect, ScreenGrabber screenGrabber)
     {
         using TesseractEngine engine = new(@"tessdata", "eng", EngineMode.Default);
         using Bitmap potBitmap = screenGrabber
             .GrabScreenBlock(left + rect.Left, top + rect.Top, PositionWidth, PositionHeight);
         using Page page = engine.Process(potBitmap);
-
-        //potBitmap.Save($"bla_{seat}.png", System.Drawing.Imaging.ImageFormat.Png);
 
         string text = page.GetText();
         StringBuilder betTotal = new();
@@ -244,17 +288,17 @@ public class GameStateReporter
         return double.TryParse(potTotal.ToString(), out double result) ? result : 0;
     }
 
-    private static Dictionary<int, ulong> LoadCardHashes(string cardFolderName)
+    private static Dictionary<int, ulong> LoadCardHashes(List<byte[]> cardImages)
     {
-        DirectoryInfo info = new(cardFolderName);
-        FileInfo[] files = info.GetFiles();
-
         var hashes = new Dictionary<int, ulong>();
         PerceptualHash hasher = new();
-        foreach (FileInfo item in files)
+
+        for (int i = 0; i < cardImages.Count; i++)
         {
-            int cardValue = int.TryParse(item.Name[0..^4], out int result) ? result : 0;
-            hashes[cardValue] = hasher.Hash(item.FullName);
+            byte[] cardImage = cardImages[i];
+            MemoryStream memoryStream = new(cardImage);
+            Bitmap bitMap = new(memoryStream);
+            hashes[i + 1] = hasher.Hash(bitMap);
         }
 
         return hashes;

@@ -8,26 +8,14 @@ public readonly struct GameData
     public (int cardSymbol, int cardSuit)[] MiddleCards { get; init; }
     public Position Position { get; init; }
     public double PotTotal { get; init; }
+    public double SmallBlind { get; init; }
+    public double BigBlind { get; init; }
 
     public bool HasBeenRaised
     {
         get
         {
-            int increase = 0;
-            double currentAmount = 0;
-            var bets = Bets.ToList();
-            bets.Sort();
-
-            for (int i = 0; i < bets.Count; i++)
-            {
-                if (currentAmount < bets[i])
-                {
-                    currentAmount = bets[i];
-                    increase++;
-                }
-            }
-
-            return increase > 2;
+            return Bets.Max() > BigBlind;
         }
     }
 }
