@@ -15,7 +15,7 @@ public class StrategyBuilder
             { Position: Position.UnderTheGun } => new UnderTheGun(),
             { Position: Position.HighJack } => new HighJack(),
             { Position: Position.CutOff} => new CutOff(),
-            _ => throw new NotImplementedException()
+            _ => new EmptyStrategy(),
         };
         
         return strategy;

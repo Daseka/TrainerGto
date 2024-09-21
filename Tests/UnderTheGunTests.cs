@@ -16,6 +16,7 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Club)
                 ],
                 Position = Position.UnderTheGun,
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var underTheGun = new UnderTheGun();
@@ -42,6 +43,7 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.UnderTheGun,
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var underTheGun = new UnderTheGun();
@@ -68,6 +70,7 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.UnderTheGun,
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var underTheGun = new UnderTheGun();
@@ -94,6 +97,7 @@ namespace Tests
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
                 Position = Position.UnderTheGun,
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var underTheGun = new UnderTheGun();
@@ -120,6 +124,7 @@ namespace Tests
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
                 Position = Position.UnderTheGun,
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var underTheGun = new UnderTheGun();

@@ -52,6 +52,22 @@ public class GameStateReporter
     private const int TopEdgeToSmallBlind = 694;
     private const int TopEdgeToUnderTheGun = 292;
 
+    private const int PositionWidth = 130;
+    private const int PositionHeight = 26;
+
+    private const int LeftEdgeToBetSeat0 = 700;
+    private const int TopEdgeToBetSeat0 = 685;
+    private const int LeftEdgeToBetSeat1 = 300;
+    private const int TopEdgeToBetSeat1 = 635;
+    private const int LeftEdgeToBetSeat2 = 330;
+    private const int TopEdgeToBetSeat2 = 375;
+    private const int LeftEdgeToBetSeat3 = 680;
+    private const int TopEdgeToBetSeat3 = 325;
+    private const int LeftEdgeToBetSeat4 = 1030;
+    private const int TopEdgeToBetSeat4 = 375;
+    private const int LeftEdgeToBetSeat5 = 1080;
+    private const int TopEdgeToBetSeat5 = 635;
+
     private readonly Dictionary<int, ulong> _leftHandCardHashes;
     private readonly Dictionary<int, ulong> _middleCardHashes;
     private readonly Dictionary<int, ulong> _rightHandCardHashes;
@@ -93,7 +109,16 @@ public class GameStateReporter
             HandCards = GetHandCards(_rect, _screenGrabber),
             CallAmount = GetCallAmount(_rect, _screenGrabber),
             PotTotal = GetPotTotal(_rect, _screenGrabber),
-            Position = GetPosition(_rect, _screenGrabber)
+            Position = GetPosition(_rect, _screenGrabber),
+            Bets =
+            [
+                GetBetSeat(0,LeftEdgeToBetSeat0,TopEdgeToBetSeat0, _rect, _screenGrabber),
+                GetBetSeat(1,LeftEdgeToBetSeat1,TopEdgeToBetSeat1, _rect, _screenGrabber),
+                GetBetSeat(2,LeftEdgeToBetSeat2,TopEdgeToBetSeat2, _rect, _screenGrabber),
+                GetBetSeat(3,LeftEdgeToBetSeat3,TopEdgeToBetSeat3, _rect, _screenGrabber),
+                GetBetSeat(4,LeftEdgeToBetSeat4,TopEdgeToBetSeat4, _rect, _screenGrabber),
+                GetBetSeat(5,LeftEdgeToBetSeat5,TopEdgeToBetSeat5, _rect, _screenGrabber),
+            ]
         };
     }
 
@@ -175,6 +200,28 @@ public class GameStateReporter
         }
 
         return Position.None;
+    }
+
+    private static double GetBetSeat(int seat,int left, int top,Rect rect, ScreenGrabber screenGrabber)
+    {
+        using TesseractEngine engine = new(@"tessdata", "eng", EngineMode.Default);
+        using Bitmap potBitmap = screenGrabber
+            .GrabScreenBlock(left + rect.Left, top + rect.Top, PositionWidth, PositionHeight);
+        using Page page = engine.Process(potBitmap);
+
+        //potBitmap.Save($"bla_{seat}.png", System.Drawing.Imaging.ImageFormat.Png);
+
+        string text = page.GetText();
+        StringBuilder betTotal = new();
+        foreach (char character in text)
+        {
+            if (char.IsNumber(character) || character == '.')
+            {
+                _ = betTotal.Append(character);
+            }
+        }
+
+        return double.TryParse(betTotal.ToString(), out double result) ? result : 0;
     }
 
     private static double GetPotTotal(Rect rect, ScreenGrabber screenGrabber)

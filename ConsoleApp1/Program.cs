@@ -7,7 +7,7 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        const int Seconds = 5;
+        const int Seconds = 2;
         System.Timers.Timer timer = StartAnalysisOnTimer(Seconds);
 
         do
@@ -18,6 +18,10 @@ internal class Program
                 Console.WriteLine($"Quiting...");
                 break;
             }
+            GameStateReporter gameStateReporter = new();
+            StrategyReporter strategyReporter = new StrategyReporter();
+            StartGrabingSreenCards(gameStateReporter, strategyReporter);
+
         } while (true);
     }
 
@@ -28,6 +32,7 @@ internal class Program
         timer.AutoReset = false;
 
         GameStateReporter gameStateReporter = new();
+        StrategyReporter strategyReporter = new StrategyReporter();
 
         timer.Elapsed += (o, e) =>
         {
@@ -35,7 +40,7 @@ internal class Program
             if (callingTimer != null)
             {
                 
-                StartGrabingSreenCards(gameStateReporter);
+                StartGrabingSreenCards(gameStateReporter, strategyReporter);
                 callingTimer.Start();
             }
         };
@@ -50,12 +55,14 @@ internal class Program
         CardSymbol symbol = (CardSymbol)middleCard.cardSymbol;
         CardSuit suit = (CardSuit)middleCard.cardSuit;
 
-        return $"{symbol} {suit}";
+        return symbol == CardSymbol.None
+            ? string.Empty
+            : $"{symbol} {suit}";
     }
 
-    private static void StartGrabingSreenCards(GameStateReporter gameStateReporter)
+    private static void StartGrabingSreenCards(GameStateReporter gameStateReporter, StrategyReporter strategyReporter)
     {
-        Console.WriteLine($"Grabbing screens for window starting with: {WindowName}");
+        Console.WriteLine($"Grabbing screens: {WindowName}");
         
         Stopwatch stopwatch = new();
         stopwatch.Restart();
@@ -66,34 +73,57 @@ internal class Program
             return;
         }
 
-        GameData data = gameStateReporter.GetGameState();
+        GameData gameData = gameStateReporter.GetGameState();
+        StrategyData strategyData = strategyReporter.GetStrategy(gameData);
 
         Console.Clear();
-        //Take screenshot of middle cards
-        Console.WriteLine($"{Environment.NewLine}=== Middle Cards ===");
 
-        foreach (var middleCard in data.MiddleCards)
-        {
-            string value = GetCardString(middleCard);
-            Console.WriteLine(value);
-        }
+        //Console.WriteLine($"{Environment.NewLine}=== Middle Cards ===");
+        //foreach (var middleCard in data.MiddleCards)
+        //{
+        //    string value = GetCardString(middleCard);
+        //    Console.WriteLine(value);
+        //}
 
-        Console.WriteLine($"{Environment.NewLine}=== Left & Right Cards ===");
-        string leftCard = GetCardString(data.HandCards[0]);
-        Console.WriteLine(leftCard);
-        string rightCard = GetCardString(data.HandCards[1]);
-        Console.WriteLine(rightCard);
+        //Console.WriteLine($"{Environment.NewLine}=== Left & Right Cards ===");
+        string leftCard = GetCardString(gameData.HandCards[0]);
+        //Console.WriteLine(leftCard);
+        string rightCard = GetCardString(gameData.HandCards[1]);
+        //Console.WriteLine(rightCard);
 
-        Console.WriteLine($"{Environment.NewLine}=== Pot Total ===");
-        Console.WriteLine(data.PotTotal);
+        //Console.WriteLine($"{Environment.NewLine}=== Pot Total ===");
+        //Console.WriteLine(data.PotTotal);
 
-        Console.WriteLine($"{Environment.NewLine}=== Call amount ===");
-        Console.WriteLine(data.CallAmount);
+        //Console.WriteLine($"{Environment.NewLine}=== Call amount ===");
+        //Console.WriteLine(data.CallAmount);
 
-        Console.WriteLine($"{Environment.NewLine}=== Position ===");
-        Console.WriteLine(data.Position);
+        //Console.WriteLine($"{Environment.NewLine}=== Position ===");
+        //Console.WriteLine(data.Position);
+
+        Console.WriteLine($"{Environment.NewLine}=== Bet amounts ===");
+        Console.WriteLine(string.Join(' ',gameData.Bets));
+
+        Console.WriteLine($"{Environment.NewLine}================");
+
+        Console.WriteLine($"C:{strategyData.Call}%  R:{strategyData.Raise}%  F:{strategyData.Fold}%");
+        Console.WriteLine($"been raised: {gameData.HasBeenRaised}");
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.WriteLine($"{leftCard} {Environment.NewLine}{rightCard}");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}{strategyData.SugestedAction}");
+        Console.ResetColor();
+        Console.WriteLine($"{Environment.NewLine}================");
 
         stopwatch.Stop();
-        Console.WriteLine($"--- calculation time: {stopwatch.Elapsed.TotalSeconds} ---");
+        Console.WriteLine($"--Time: {stopwatch.Elapsed.TotalSeconds}--");
+    }
+
+    private static void WritePercentageLine(StrategyData strategyData)
+    {
+        Console.Write("C:");
+        if (strategyData.ca)
+        {
+
+        }
     }
 }

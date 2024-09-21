@@ -16,7 +16,7 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = false
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var button = new Button();
@@ -43,7 +43,7 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var button = new Button();
@@ -70,7 +70,7 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = false
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var button = new Button();
@@ -97,7 +97,7 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var button = new Button();
@@ -124,7 +124,7 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = false
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var button = new Button();
@@ -151,7 +151,7 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var button = new Button();
@@ -178,7 +178,7 @@ namespace Tests
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = false
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var button = new Button();
@@ -205,7 +205,7 @@ namespace Tests
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var button = new Button();
@@ -232,7 +232,7 @@ namespace Tests
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = false
+                Bets = [1, 2, 0, 0, 0]
             };
 
             var button = new Button();
@@ -259,7 +259,7 @@ namespace Tests
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
                 Position = Position.Button,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var button = new Button();

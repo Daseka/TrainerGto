@@ -16,7 +16,7 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Club)
                 ],
                 Position = Position.BigBlind,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var bigBlind = new BigBlind();
@@ -43,7 +43,8 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.BigBlind,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
+
             };
 
             var bigBlind = new BigBlind();
@@ -70,7 +71,7 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Club)
                 ],
                 Position = Position.BigBlind,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var bigBlind = new BigBlind();
@@ -97,7 +98,7 @@ namespace Tests
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
                 Position = Position.BigBlind,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var bigBlind = new BigBlind();
@@ -124,7 +125,7 @@ namespace Tests
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
                 Position = Position.BigBlind,
-                HasBeenRaised = true
+                Bets = [1, 2, 3, 0, 0]
             };
 
             var bigBlind = new BigBlind();

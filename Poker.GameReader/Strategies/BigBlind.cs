@@ -255,18 +255,9 @@ public class BigBlind : BaseStrategy
         double fold;
         double call;
 
-        if (gameData.HasBeenRaised)
-        {
-            RaisedRaise.TryGetValue(hand, out raise);
-            RaisedFold.TryGetValue(hand, out fold);
-            RaisedCall.TryGetValue(hand, out call);
-        }
-        else
-        {
-            call = 1;
-            raise = 1;
-            fold = 1;
-        }
+        RaisedRaise.TryGetValue(hand, out raise);
+        RaisedFold.TryGetValue(hand, out fold);
+        RaisedCall.TryGetValue(hand, out call);
 
         return new StrategySolution { Call = call, Fold = fold, Raise = raise };
     }
