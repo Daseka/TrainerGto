@@ -64,4 +64,4 @@ public static class Flush
         return suits;
     }
 }
-}
+

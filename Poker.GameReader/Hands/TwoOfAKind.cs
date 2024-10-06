@@ -2,7 +2,7 @@
 
 namespace Poker.GameReader.Hands;
 
-public static class FourOfAKind
+public static class TwoOfAKind
 {
     public static double CalculateChance(GameData gameData)
     {
@@ -19,7 +19,7 @@ public static class FourOfAKind
     private static int CalculateMaximumOfAKind(List<int> cards)
     {
         int[] cardCounts = new int[14];
-        
+
         int maximumOfAKind = 0;
         foreach (var card in cards)
         {
@@ -33,24 +33,14 @@ public static class FourOfAKind
 
     private static double CalculateChance(int maximumOfAKind, int totalCards, GameData gameData)
     {
-        if (maximumOfAKind < 2)
-        {
-            return 0;
-        }
-
-        if (maximumOfAKind == 4)
+        if (maximumOfAKind >= 2)
         {
             return 1;
         }
 
-        if (maximumOfAKind == 2 && totalCards == 5)
+        if (maximumOfAKind == 1 && (totalCards == 5 || totalCards == 6))
         {
-            return 0.001;
-        }
-
-        if (maximumOfAKind == 3 && (totalCards == 5|| totalCards == 6))
-        {
-            return 0.02;
+            return 0.13;
         }
 
         return 0;

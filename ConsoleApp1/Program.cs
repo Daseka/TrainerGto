@@ -62,8 +62,6 @@ internal class Program
 
     private static void StartGrabingSreenCards(GameStateReporter gameStateReporter, StrategyReporter strategyReporter)
     {
-        Console.WriteLine($"Scanning: {WindowName}");
-        
         Stopwatch stopwatch = new();
         stopwatch.Restart();
 

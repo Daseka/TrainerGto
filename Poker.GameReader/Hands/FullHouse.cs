@@ -2,55 +2,66 @@
 
 namespace Poker.GameReader.Hands;
 
-public static class FourOfAKind
+public static class FullHouse
 {
     public static double CalculateChance(GameData gameData)
     {
         var cards = CreateCards(gameData);
-        int maximumOfAKind = CalculateMaximumOfAKind(cards);
+        var (pairCount,tripple) = MaximumCounts(cards);
         int totalCards = cards.Count;
 
-        double chance = CalculateChance(maximumOfAKind, totalCards, gameData);
+        double chance = CalculateChance(pairCount, tripple, totalCards, gameData);
 
         return chance;
-
     }
 
-    private static int CalculateMaximumOfAKind(List<int> cards)
+    private static (int pair, int tripple) MaximumCounts(List<int> cards)
     {
         int[] cardCounts = new int[14];
-        
-        int maximumOfAKind = 0;
+
+        int PairCount = 0;
+        int TrippleCount = 0;
         foreach (var card in cards)
         {
             cardCounts[card]++;
 
-            maximumOfAKind = Math.Max(maximumOfAKind, cardCounts[card]);
+            if (cardCounts[card] == 2)
+            {
+                PairCount++;
+            }
+
+            if (cardCounts[card] == 3)
+            {
+                PairCount--;
+                TrippleCount++;
+            }
         }
 
-        return maximumOfAKind;
+        return (PairCount, TrippleCount);
     }
 
-    private static double CalculateChance(int maximumOfAKind, int totalCards, GameData gameData)
+    private static double CalculateChance(int pairCount, int trippleCount, int totalCards, GameData gameData)
     {
-        if (maximumOfAKind < 2)
-        {
-            return 0;
-        }
-
-        if (maximumOfAKind == 4)
+        if (pairCount == 1 && trippleCount == 1)
         {
             return 1;
         }
 
-        if (maximumOfAKind == 2 && totalCards == 5)
+        if (pairCount == 1 && totalCards == 5 )
         {
-            return 0.001;
+            return 0.0009;
+
         }
 
-        if (maximumOfAKind == 3 && (totalCards == 5|| totalCards == 6))
+        if (pairCount == 2 && (totalCards == 5 || totalCards == 6))
         {
-            return 0.02;
+            return 0.04;
+
+        }
+
+        if (trippleCount == 1 && (totalCards == 5 || totalCards == 6))
+        {
+            return 0.07;
         }
 
         return 0;
@@ -78,3 +89,4 @@ public static class FourOfAKind
         return cards;
     }
 }
+

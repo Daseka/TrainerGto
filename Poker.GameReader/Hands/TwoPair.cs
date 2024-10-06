@@ -2,55 +2,52 @@
 
 namespace Poker.GameReader.Hands;
 
-public static class FourOfAKind
+public static class TwoPair
 {
     public static double CalculateChance(GameData gameData)
     {
         var cards = CreateCards(gameData);
-        int maximumOfAKind = CalculateMaximumOfAKind(cards);
+        int pairCount = MaximumPairs(cards);
         int totalCards = cards.Count;
 
-        double chance = CalculateChance(maximumOfAKind, totalCards, gameData);
+        double chance = CalculateChance(pairCount, totalCards, gameData);
 
         return chance;
-
     }
 
-    private static int CalculateMaximumOfAKind(List<int> cards)
+    private static int MaximumPairs(List<int> cards)
     {
         int[] cardCounts = new int[14];
-        
-        int maximumOfAKind = 0;
+
+        int PairCount = 0;
         foreach (var card in cards)
         {
             cardCounts[card]++;
 
-            maximumOfAKind = Math.Max(maximumOfAKind, cardCounts[card]);
+            if (cardCounts[card] == 2)
+            {
+               PairCount++;
+            }
         }
 
-        return maximumOfAKind;
+        return PairCount;
     }
 
-    private static double CalculateChance(int maximumOfAKind, int totalCards, GameData gameData)
+    private static double CalculateChance(int pairCount, int totalCards, GameData gameData)
     {
-        if (maximumOfAKind < 2)
-        {
-            return 0;
-        }
-
-        if (maximumOfAKind == 4)
+        if (pairCount >= 2)
         {
             return 1;
         }
 
-        if (maximumOfAKind == 2 && totalCards == 5)
+        if (pairCount == 1 && (totalCards == 5 || totalCards == 6))
         {
-            return 0.001;
+            return 0.06;
         }
 
-        if (maximumOfAKind == 3 && (totalCards == 5|| totalCards == 6))
+        if (pairCount == 0 && totalCards == 5)
         {
-            return 0.02;
+            return 0.008;
         }
 
         return 0;

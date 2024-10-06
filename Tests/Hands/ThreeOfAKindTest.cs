@@ -3,58 +3,58 @@ using Poker.GameReader.Reporters;
 
 namespace Tests.Hands
 {
-    public class FourOfAKindTest
+    public class ThreeOfAKindTest
     {
         [Fact]
-        public void TwoOfAKindTwoCard()
+        public void OneOfAKindOneCard()
         {
             var gameData = new GameData
             {
                 HandCards =
                 [
                     (CardSymbol.Five, CardSuit.Club),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardSymbol.Eight, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Ten, CardSuit.Hart),
+                    (CardSymbol.Two, CardSuit.Spade),
                     (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Two, CardSuit.Club),
-                    (CardSymbol.None, CardSuit.None),
+                    (CardSymbol.Six, CardSuit.Club),
+                    (CardSymbol.Jack, CardSuit.Diamond),
                     (CardSymbol.None, CardSuit.None),
                 ]
             };
 
-            double chance = FourOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData);
 
-            Assert.Equal(0.001, chance);
+            Assert.Equal(0, chance);
         }
 
         [Fact]
-        public void ThreeOfAKindTwoCard()
+        public void OneOfAKindTwoCard()
         {
             var gameData = new GameData
             {
                 HandCards =
                 [
                     (CardSymbol.Five, CardSuit.Club),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardSymbol.Nine, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Five, CardSuit.Spade),
+                    (CardSymbol.Two, CardSuit.Spade),
                     (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Two, CardSuit.Club),
                     (CardSymbol.None, CardSuit.None),
+                    (CardSymbol.Jack, CardSuit.Diamond),
                     (CardSymbol.None, CardSuit.None),
                 ]
             };
 
-            double chance = FourOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData);
 
-            Assert.Equal(0.02, chance);
+            Assert.Equal(0.003, chance);
         }
 
         [Fact]
@@ -78,9 +78,35 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = FourOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData);
 
-            Assert.Equal(0.02, chance);
+            Assert.Equal(1, chance);
+        }
+
+        [Fact]
+        public void ThreeOfAKindTwoCard()
+        {
+            var gameData = new GameData
+            {
+                HandCards =
+                [
+                    (CardSymbol.Five, CardSuit.Club),
+                    (CardSymbol.Five, CardSuit.Hart)
+                ],
+
+                CommunityCards =
+                [
+                    (CardSymbol.Five, CardSuit.Spade),
+                    (CardSymbol.Three, CardSuit.Club),
+                    (CardSymbol.Two, CardSuit.Club),
+                    (CardSymbol.None, CardSuit.None),
+                    (CardSymbol.None, CardSuit.None),
+                ]
+            };
+
+            double chance = ThreeOfAKind.CalculateChance(gameData);
+
+            Assert.Equal(1, chance);
         }
 
         [Fact]
@@ -104,13 +130,13 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = FourOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData);
 
-            Assert.Equal(0, chance);
+            Assert.Equal(0.04, chance);
         }
 
         [Fact]
-        public void FourOfAKindOneCard()
+        public void TwoOfAKindTwoCard()
         {
             var gameData = new GameData
             {
@@ -122,43 +148,17 @@ namespace Tests.Hands
 
                 CommunityCards =
                 [
-                    (CardSymbol.Five, CardSuit.Spade),
+                    (CardSymbol.Ten, CardSuit.Hart),
                     (CardSymbol.Three, CardSuit.Club),
                     (CardSymbol.Two, CardSuit.Club),
-                    (CardSymbol.Five, CardSuit.Diamond),
+                    (CardSymbol.None, CardSuit.None),
                     (CardSymbol.None, CardSuit.None),
                 ]
             };
 
-            double chance = FourOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData);
 
-            Assert.Equal(1, chance);
-        }
-
-        [Fact]
-        public void FourOfAKindTwoCard()
-        {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardSymbol.Five, CardSuit.Club),
-                    (CardSymbol.Five, CardSuit.Hart)
-                ],
-
-                CommunityCards =
-                [
-                    (CardSymbol.Five, CardSuit.Spade),
-                    (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.Five, CardSuit.Diamond),
-                    (CardSymbol.None, CardSuit.None),
-                ]
-            };
-
-            double chance = FourOfAKind.CalculateChance(gameData);
-
-            Assert.Equal(1, chance);
+            Assert.Equal(0.04, chance);
         }
     }
 }
