@@ -1,7 +1,7 @@
 ﻿using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
 
-namespace Tests
+namespace Tests.Strategies
 {
     public class UnderTheGunTests
     {
@@ -81,7 +81,7 @@ namespace Tests
                 Fold = 1,
                 Raise = 0,
                 Call = 0,
-            };  
+            };
 
             Assert.Equal(expected, result);
         }

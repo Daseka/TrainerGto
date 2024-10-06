@@ -1,7 +1,7 @@
 ﻿using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
 
-namespace Tests
+namespace Tests.Strategies
 {
     public class BigBlindTests
     {

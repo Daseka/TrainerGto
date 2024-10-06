@@ -1,10 +1,9 @@
 ﻿using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
-using System.Collections.Generic;
 
-namespace Tests
+namespace Tests.Strategies
 {
-    public class CutOffTests
+    public class ButtonTests
     {
         [Fact]
         public void WhenHasKingsHasNotBeenRaised()
@@ -16,12 +15,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Hart),
                     (CardSymbol.King,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -43,12 +42,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Hart),
                     (CardSymbol.King,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -72,18 +71,18 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Hart),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
                 Fold = 0.0,
-                Raise = 1,
-                Call = 0,
+                Raise = 1.0,
+                Call = 0.0,
             };
 
             Assert.Equal(expected, result);
@@ -99,18 +98,18 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Hart),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 0.96,
+                Fold = 0.78,
                 Raise = 0.0,
-                Call = 0.04,
+                Call = 0.22,
             };
 
             Assert.Equal(expected, result);
@@ -126,12 +125,12 @@ namespace Tests
                     (CardSymbol.Seven,CardSuit.Club),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -153,12 +152,12 @@ namespace Tests
                     (CardSymbol.Seven,CardSuit.Club),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -171,6 +170,7 @@ namespace Tests
         }
 
         [Fact]
+
         public void WhenHasAceTenOffsuitNotBeenRaised()
         {
             var gameData = new GameData
@@ -182,12 +182,12 @@ namespace Tests
                     (CardSymbol.Ace,CardSuit.Diamond),
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -209,12 +209,12 @@ namespace Tests
                     (CardSymbol.Ace,CardSuit.Diamond),
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -238,12 +238,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Diamond),
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -254,7 +254,7 @@ namespace Tests
 
             Assert.Equal(expected, result);
         }
-        
+
         [Fact]
         public void WhenHasKingJackOffsuitBeenRaised()
         {
@@ -265,17 +265,17 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Diamond),
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
-                Position = Position.CutOff,
+                Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var cutOff = new CutOff();
-            var result = cutOff.Solve(gameData);
+            var button = new Button();
+            var result = button.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 1,
-                Raise = 0,
+                Fold = 0.90,
+                Raise = 0.10,
                 Call = 0,
             };
 

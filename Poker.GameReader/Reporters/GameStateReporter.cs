@@ -153,7 +153,7 @@ public class GameStateReporter
         {
             SmallBlind = _smallBlind,
             BigBlind = _bigBlind,
-            MiddleCards = GetMiddleCards(_rect, _screenGrabber),
+            CommunityCards = GetMiddleCards(_rect, _screenGrabber),
             HandCards = GetHandCards(_rect, _screenGrabber),
             CallAmount = GetCallAmount(_rect, _screenGrabber),
             PotTotal = GetPotTotal(_rect, _screenGrabber),

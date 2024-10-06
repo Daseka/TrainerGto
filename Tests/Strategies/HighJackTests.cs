@@ -1,9 +1,9 @@
 ﻿using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
 
-namespace Tests
+namespace Tests.Strategies
 {
-    public class ButtonTests
+    public class HighJackTests
     {
         [Fact]
         public void WhenHasKingsHasNotBeenRaised()
@@ -15,12 +15,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Hart),
                     (CardSymbol.King,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -42,12 +42,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Hart),
                     (CardSymbol.King,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -71,18 +71,18 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Hart),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 0.0,
-                Raise = 1.0,
-                Call = 0.0,
+                Fold = 0.31,
+                Raise = 0.69,
+                Call = 0,
             };
 
             Assert.Equal(expected, result);
@@ -98,18 +98,18 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Hart),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 0.78,
+                Fold = 0.99,
                 Raise = 0.0,
-                Call = 0.22,
+                Call = 0.01,
             };
 
             Assert.Equal(expected, result);
@@ -125,12 +125,12 @@ namespace Tests
                     (CardSymbol.Seven,CardSuit.Club),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -152,12 +152,12 @@ namespace Tests
                     (CardSymbol.Seven,CardSuit.Club),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -170,7 +170,6 @@ namespace Tests
         }
 
         [Fact]
-
         public void WhenHasAceTenOffsuitNotBeenRaised()
         {
             var gameData = new GameData
@@ -182,12 +181,12 @@ namespace Tests
                     (CardSymbol.Ace,CardSuit.Diamond),
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -209,12 +208,12 @@ namespace Tests
                     (CardSymbol.Ace,CardSuit.Diamond),
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -238,12 +237,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Diamond),
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -265,17 +264,17 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Diamond),
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
-                Position = Position.Button,
+                Position = Position.HighJack,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var button = new Button();
-            var result = button.Solve(gameData);
+            var highJack = new HighJack();
+            var result = highJack.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 0.90,
-                Raise = 0.10,
+                Fold = 1,
+                Raise = 0,
                 Call = 0,
             };
 

@@ -5,7 +5,7 @@ public readonly struct GameData
     public double[] Bets { get; init; }
     public double CallAmount { get; init; }
     public (int cardSymbol, int cardSuit)[] HandCards { get; init; }
-    public (int cardSymbol, int cardSuit)[] MiddleCards { get; init; }
+    public (int cardSymbol, int cardSuit)[] CommunityCards { get; init; }
     public Position Position { get; init; }
     public double PotTotal { get; init; }
     public double SmallBlind { get; init; }

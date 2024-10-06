@@ -18,9 +18,9 @@ public class StrategyReporter
 
     private static bool IsAfterFlop(GameData gameData)
     {
-        return gameData.MiddleCards[0] != (CardSymbol.None, CardSuit.None)
-            || gameData.MiddleCards[1] != (CardSymbol.None, CardSuit.None)
-            || gameData.MiddleCards[2] != (CardSymbol.None, CardSuit.None)
+        return gameData.CommunityCards[0] != (CardSymbol.None, CardSuit.None)
+            || gameData.CommunityCards[1] != (CardSymbol.None, CardSuit.None)
+            || gameData.CommunityCards[2] != (CardSymbol.None, CardSuit.None)
             || gameData.HandCards[0] == (CardSymbol.None, CardSuit.None)
             || gameData.HandCards[1] == (CardSymbol.None, CardSuit.None);
     }

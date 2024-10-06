@@ -1,32 +1,34 @@
 ﻿using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
 
-namespace Tests
+namespace Tests.Strategies
 {
-    public class HighJackTests
+    public class SmallBlindTests
     {
         [Fact]
         public void WhenHasKingsHasNotBeenRaised()
         {
             var gameData = new GameData
             {
+                SmallBlind = 1,
+                BigBlind = 2,
                 HandCards =
                 [
                     (CardSymbol.King,CardSuit.Hart),
                     (CardSymbol.King,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
                 Fold = 0,
-                Raise = 1,
-                Call = 0,
+                Raise = 0.86,
+                Call = 0.14,
             };
 
             Assert.Equal(expected, result);
@@ -42,12 +44,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Hart),
                     (CardSymbol.King,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -71,18 +73,18 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Hart),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 0.31,
-                Raise = 0.69,
-                Call = 0,
+                Fold = 0.0,
+                Raise = 0.57,
+                Call = 0.43,
             };
 
             Assert.Equal(expected, result);
@@ -98,18 +100,18 @@ namespace Tests
                     (CardSymbol.Four,CardSuit.Hart),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 0.99,
+                Fold = 0.75,
                 Raise = 0.0,
-                Call = 0.01,
+                Call = 0.25,
             };
 
             Assert.Equal(expected, result);
@@ -120,23 +122,25 @@ namespace Tests
         {
             var gameData = new GameData
             {
+                SmallBlind = 1,
+                BigBlind = 2,
                 HandCards =
                 [
                     (CardSymbol.Seven,CardSuit.Club),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
-                Fold = 1,
-                Raise = 0,
-                Call = 0,
+                Fold = 0,
+                Raise = 0.24,
+                Call = 0.76,
             };
 
             Assert.Equal(expected, result);
@@ -152,12 +156,12 @@ namespace Tests
                     (CardSymbol.Seven,CardSuit.Club),
                     (CardSymbol.Four,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -181,18 +185,18 @@ namespace Tests
                     (CardSymbol.Ace,CardSuit.Diamond),
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
                 Fold = 0,
-                Raise = 1,
-                Call = 0,
+                Raise = 0.69,
+                Call = 0.31,
             };
 
             Assert.Equal(expected, result);
@@ -208,12 +212,12 @@ namespace Tests
                     (CardSymbol.Ace,CardSuit.Diamond),
                     (CardSymbol.Ten,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
@@ -237,18 +241,18 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Diamond),
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 0, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
                 Fold = 0,
-                Raise = 1,
-                Call = 0,
+                Raise = 0.58,
+                Call = 0.42,
             };
 
             Assert.Equal(expected, result);
@@ -264,12 +268,12 @@ namespace Tests
                     (CardSymbol.King,CardSuit.Diamond),
                     (CardSymbol.Jack,CardSuit.Club)
                 ],
-                Position = Position.HighJack,
+                Position = Position.SmallBlind,
                 Bets = [1, 2, 3, 0, 0]
             };
 
-            var highJack = new HighJack();
-            var result = highJack.Solve(gameData);
+            var smallBlind = new SmallBlind();
+            var result = smallBlind.Solve(gameData);
 
             var expected = new StrategySolution
             {
