@@ -6,6 +6,33 @@ namespace Tests.Hands
     public class StraightTest
     {
         [Fact]
+        public void bla()
+        {
+            // 2,3,x,5,x,x,x,x,10,11
+            var gameData = new GameData
+            {
+                HandCards =
+                [
+                    (CardSymbol.Ace, CardSuit.Hart),
+                    (CardSymbol.Queen, CardSuit.Hart )
+                ],
+
+                CommunityCards =
+                [
+                    (CardSymbol.Jack, CardSuit.Club),
+                    (CardSymbol.Ten, CardSuit.Club),
+                    (CardSymbol.Six, CardSuit.Club),
+                    (CardSymbol.None, CardSuit.None),
+                    (CardSymbol.None, CardSuit.None),
+                ]
+            };
+
+            double chance = Straight.CalculateChance(gameData);
+
+            Assert.Equal(0.17, chance);
+        }
+
+        [Fact]
         public void BackdoorGutShotTwoCard()
         {
             // 2,3,x,5,x,x,x,x,10,11
@@ -14,7 +41,7 @@ namespace Tests.Hands
                 HandCards =
                 [
                     (CardSymbol.Jack, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardSymbol.Five, CardSuit.Hart )
                 ],
 
                 CommunityCards =

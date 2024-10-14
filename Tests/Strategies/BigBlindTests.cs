@@ -6,6 +6,24 @@ namespace Tests.Strategies
     public class BigBlindTests
     {
         [Fact]
+        public void bla()
+        {
+            double callChance = 1;
+            double winChance = .16;
+            double pot = 775;
+            double loseChance = .84;
+            double expectedEV = 0;
+
+            var x = ((expectedEV / callChance) - (winChance * pot)) / (winChance - loseChance);
+
+
+            double myBet = 450;
+
+            Assert.Equal(myBet, Math.Round(x, 2));
+        }
+
+
+        [Fact]
         public void WhenHasKingsHasBeenRaised()
         {
             var gameData = new GameData

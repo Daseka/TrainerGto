@@ -70,6 +70,10 @@ public static class Straight
         foreach (int number in numbers)
         {
             bitValueOfNumbers |= 1u << number;
+            if (number == 1)
+            {
+                bitValueOfNumbers |= 1u << 14;
+            }
         }
 
         return bitValueOfNumbers;
@@ -109,7 +113,7 @@ public static class Straight
         int min = size;
         int windowStartIndex = 0;
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i <= 10; i++)
         {
             //Get only relevant bits for window of given size starting at position i
             uint window = (~0u >> (32 - (size + i))) & (~0u << i);
@@ -162,12 +166,16 @@ public static class Straight
 
     private static bool IsBackDoorOpenEnded(List<int> missingValues, int startIndexWindow)
     {
-        return missingValues.Count == 2 && startIndexWindow + StraightSize - 1 == missingValues[1];
+        return missingValues.Count == 2 
+            && startIndexWindow + StraightSize - 1 == missingValues[1]
+            && missingValues[1] - missingValues[0] == 1;
     }
 
     private static bool IsBackDoorGutShot(List<int> missingValues, int startIndexWindow)
     {
-        return missingValues.Count == 2 && missingValues[1] - missingValues[0] != 1;
+        return missingValues.Count == 2
+            && ((startIndexWindow + StraightSize - 1 == missingValues[1] && missingValues[1] - missingValues[0] != 1)
+                || (startIndexWindow + StraightSize - 1 != missingValues[1] && missingValues[1] - missingValues[0] == 1));
     }
 
     private static bool IsGutShot(List<int> missingValues, int startIndexWindow)

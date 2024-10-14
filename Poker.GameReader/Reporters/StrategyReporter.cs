@@ -1,5 +1,6 @@
 ﻿using Poker.GameReader.Hands;
 using Poker.GameReader.Strategies;
+using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 using System;
 using System.Text;
 
@@ -34,18 +35,44 @@ public class StrategyReporter
         
         UpdatePostFlopHandChances(gameData, strategyData);
 
+
+
         var sugestion = new StringBuilder();
         foreach (var hand in strategyData.PostFlopHandChances)
         {
-            if (hand.Value == 0 || hand.Value == 1)
+            if (hand.Value == 0 )
             {
                 continue;
             }
 
-            sugestion.AppendLine($"{hand.Key,12} {hand.Value, 6}");
+            var sugestedBetAmount = GetSugestedBetAmount(hand.Value, gameData);
+
+            sugestion.AppendLine($"{hand.Key,8} {hand.Value * 100.0, 5:F2}% Bet ${sugestedBetAmount:F2}");
+
+            if (hand.Value == 1)
+            {
+                // no need to show lower hands only top hand
+                break;
+            }
         }
 
+        strategyData.SugestedAction = sugestion.Length == 0 
+            ? "No Strategy" 
+            : sugestion.ToString();
+
         return strategyData;
+    }
+
+    private double GetSugestedBetAmount(double handDrawPercentage, GameData gameData)
+    {
+        // if draw is 100% complete then set winchance to 75%
+        double winChance = handDrawPercentage > .50? .50: handDrawPercentage;
+        double pot = gameData.PotTotal;
+        double loseChance = 1 - winChance;
+
+        var sugestedBetAmount = (-winChance * pot) / (winChance - loseChance);
+
+        return sugestedBetAmount;
     }
 
     private static void UpdatePostFlopHandChances(GameData gameData, StrategyData strategyData)
@@ -56,7 +83,7 @@ public class StrategyReporter
         strategyData.PostFlopHandChances[Hand.Straight] = Straight.CalculateChance(gameData);
         strategyData.PostFlopHandChances[Hand.ThreeOfAKind] = ThreeOfAKind.CalculateChance(gameData);
         strategyData.PostFlopHandChances[Hand.TwoPair] = TwoPair.CalculateChance(gameData);
-        strategyData.PostFlopHandChances[Hand.OnePair] = 1;
+        strategyData.PostFlopHandChances[Hand.OnePair] = TwoOfAKind.CalculateChance(gameData);
     }
 
     private StrategyData GetPreFlopStrategy(GameData gameData)

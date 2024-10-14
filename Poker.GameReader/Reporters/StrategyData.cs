@@ -2,20 +2,20 @@
 
 namespace Poker.GameReader.Reporters;
 
-public readonly struct StrategyData
+public struct StrategyData
 {
     public double Call { get; init; }
     public double Raise { get; init; }
     public double Fold { get; init; }
-    public string SugestedAction { get; init; }
+    public string SugestedAction { get; set; }
 
-    public Dictionary<Hand, double> PostFlopHandChances { get; init; }
+    public Dictionary<string, double> PostFlopHandChances { get; init; }
 
     public StrategyData()
     {
         SugestedAction = string.Empty;
 
-        PostFlopHandChances = new Dictionary<Hand, double>
+        PostFlopHandChances = new Dictionary<string, double>
         {
             { Hand.FourOfAKind, 0 },
             { Hand.FullHouse, 0 },
