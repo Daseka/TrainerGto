@@ -34,8 +34,8 @@ public class GameStateReporter
     private const int PotTotalWidth = 260;
     private const int SpaceBetweenCards = 17;
 
-    private const int SymbolAreaHeight = 39;
-    private const int SymbolAreaWidth = 39;
+    private const int RankAreaHeight = 39;
+    private const int RankAreaWidth = 39;
 
     private const int TopEdgeToBigBlind = 350;
     private const int TopEdgeToButton = 724;
@@ -84,13 +84,13 @@ public class GameStateReporter
         PreLoadTesseractEngine();
     }
 
-    public bool ConnectToGame(string gameName)
+    public bool ConnectToGame(string[] gameName)
     {
         List<nint> visibleWindows = WindowHandles.GetVisibleWindows();
         foreach (var handle in visibleWindows)
         {
             var title = WindowHandles.GetWindowTitle(handle);
-            if (title.StartsWith(gameName, StringComparison.InvariantCultureIgnoreCase))
+            if (gameName.Any(name => title.StartsWith(name, StringComparison.InvariantCultureIgnoreCase)))
             {
                 _rect = WindowHandles.GetWindowRect(handle);
 
@@ -309,7 +309,7 @@ public class GameStateReporter
         using TesseractEngine engine2 = new(@"tessdata", "eng", EngineMode.Default);
     }
 
-    private static (int cardSymbol, int cardSuit) RunHashComparison(Bitmap bitmap, Dictionary<int, ulong> cardHashes)
+    private static (int cardRank, int cardSuit) RunHashComparison(Bitmap bitmap, Dictionary<int, ulong> cardHashes)
     {
         Color pixelColor = bitmap.GetPixel(bitmap.Width - 1, bitmap.Height - 1);
 
@@ -341,18 +341,18 @@ public class GameStateReporter
             }
         }
 
-        return highestCertainty < 80 ? (CardSymbol.None, CardSuit.None) : (correctCard, suit);
+        return highestCertainty < 80 ? (CardRank.None, CardSuit.None) : (correctCard, suit);
     }
 
     private static Bitmap[] TakeScreenShotHandCards(Rect rect, ScreenGrabber screenGrabber)
     {
         int y1 = TopEdgeToCardLeftHand + rect.Top;
         int x1 = LeftEdgeToCardLeftHand + rect.Left;
-        Bitmap left = screenGrabber.GrabScreenBlock(x1, y1, SymbolAreaWidth, SymbolAreaHeight);
+        Bitmap left = screenGrabber.GrabScreenBlock(x1, y1, RankAreaWidth, RankAreaHeight);
 
         int y2 = TopEdgeToCardRightHand + rect.Top;
         int x2 = LeftEdgeToCardRightHand + rect.Left;
-        Bitmap right = screenGrabber.GrabScreenBlock(x2, y2, SymbolAreaWidth, SymbolAreaHeight);
+        Bitmap right = screenGrabber.GrabScreenBlock(x2, y2, RankAreaWidth, RankAreaHeight);
 
         return [left, right];
     }
@@ -367,7 +367,7 @@ public class GameStateReporter
         for (int i = 0; i < MiddleCardCount; i++)
         {
             int x = LeftEdgeToCard + rect.Left + SpaceBetweenCards * i + CardWidth * i;
-            Bitmap screenBlock = screenGrabber.GrabScreenBlock(x, y, SymbolAreaWidth, SymbolAreaHeight);
+            Bitmap screenBlock = screenGrabber.GrabScreenBlock(x, y, RankAreaWidth, RankAreaHeight);
 
             middleCards[i] = screenBlock;
         }
@@ -382,7 +382,7 @@ public class GameStateReporter
         return bitmap.GetPixel(1, 1).R > 100;
     }
 
-    private (int cardSymbol, int cardSuit)[] GetHandCards(Rect rect, ScreenGrabber screenGrabber)
+    private (int cardRank, int cardSuit)[] GetHandCards(Rect rect, ScreenGrabber screenGrabber)
     {
         Bitmap[] bitmaps = TakeScreenShotHandCards(rect, screenGrabber);
 
@@ -399,10 +399,10 @@ public class GameStateReporter
         }
     }
 
-    private (int cardSymbol, int cardSuit)[] GetMiddleCards(Rect rect, ScreenGrabber screenGrabber)
+    private (int cardRank, int cardSuit)[] GetMiddleCards(Rect rect, ScreenGrabber screenGrabber)
     {
         Bitmap[] bitmaps = TakeScreenShotMiddleCards(rect, screenGrabber);
-        (int cardSymbol, int cardSuit)[] cards = new (int, int)[bitmaps.Length];
+        (int cardRank, int cardSuit)[] cards = new (int, int)[bitmaps.Length];
 
         for (int i = 0; i < cards.Length; i++)
         {

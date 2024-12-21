@@ -13,17 +13,17 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Ace, CardSuit.Hart),
-                    (CardSymbol.Queen, CardSuit.Hart )
+                    (CardRank.Ace, CardSuit.Hart),
+                    (CardRank.Queen, CardSuit.Hart )
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Jack, CardSuit.Club),
-                    (CardSymbol.Ten, CardSuit.Club),
-                    (CardSymbol.Six, CardSuit.Club),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
+                    (CardRank.Jack, CardSuit.Club),
+                    (CardRank.Ten, CardSuit.Club),
+                    (CardRank.Six, CardSuit.Club),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
                 ]
             };
 
@@ -40,17 +40,17 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Jack, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart )
+                    (CardRank.Jack, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart )
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Ten, CardSuit.Club),
-                    (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Two, CardSuit.Club),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
+                    (CardRank.Ten, CardSuit.Club),
+                    (CardRank.Three, CardSuit.Club),
+                    (CardRank.Two, CardSuit.Club),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
                 ]
             };
 
@@ -67,17 +67,17 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Jack, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardRank.Jack, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Ten, CardSuit.Club),
-                    (CardSymbol.Four, CardSuit.Club),
-                    (CardSymbol.Six, CardSuit.Club),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
+                    (CardRank.Ten, CardSuit.Club),
+                    (CardRank.Four, CardSuit.Club),
+                    (CardRank.Six, CardSuit.Club),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
                 ]
             };
 
@@ -94,17 +94,17 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Jack, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardRank.Jack, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.Ten, CardSuit.Club),
-                    (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Two, CardSuit.Club),
-                    (CardSymbol.Six, CardSuit.Club),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.Ten, CardSuit.Club),
+                    (CardRank.Three, CardSuit.Club),
+                    (CardRank.Two, CardSuit.Club),
+                    (CardRank.Six, CardSuit.Club),
                 ]
             };
 
@@ -121,17 +121,17 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Jack, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardRank.Jack, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Two, CardSuit.Club),
-                    (CardSymbol.Six, CardSuit.Club),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.Three, CardSuit.Club),
+                    (CardRank.Two, CardSuit.Club),
+                    (CardRank.Six, CardSuit.Club),
                 ]
             };
 
@@ -148,17 +148,17 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Six, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardRank.Six, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
                 ]
             };
 
@@ -175,17 +175,17 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Nine, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardRank.Nine, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
-                    (CardSymbol.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
+                    (CardRank.None, CardSuit.None),
                 ]
             };
 
@@ -202,16 +202,16 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Two, CardSuit.Hart),
-                    (CardSymbol.Nine, CardSuit.Hart)
+                    (CardRank.Two, CardSuit.Hart),
+                    (CardRank.Nine, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Ten, CardSuit.Club),
-                    (CardSymbol.Eight, CardSuit.Club),
-                    (CardSymbol.Jack, CardSuit.Club)
+                    (CardRank.Three, CardSuit.Club),
+                    (CardRank.Ten, CardSuit.Club),
+                    (CardRank.Eight, CardSuit.Club),
+                    (CardRank.Jack, CardSuit.Club)
                 ]
             };
 
@@ -228,15 +228,15 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Two, CardSuit.Hart),
-                    (CardSymbol.Nine, CardSuit.Hart)
+                    (CardRank.Two, CardSuit.Hart),
+                    (CardRank.Nine, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Eight, CardSuit.Club),
-                    (CardSymbol.Ten, CardSuit.Club),
-                    (CardSymbol.Jack, CardSuit.Club)
+                    (CardRank.Eight, CardSuit.Club),
+                    (CardRank.Ten, CardSuit.Club),
+                    (CardRank.Jack, CardSuit.Club)
                 ]
             };
 
@@ -253,15 +253,15 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Four, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardRank.Four, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Two, CardSuit.Club),
-                    (CardSymbol.Six, CardSuit.Club),
+                    (CardRank.Three, CardSuit.Club),
+                    (CardRank.Two, CardSuit.Club),
+                    (CardRank.Six, CardSuit.Club),
                 ]
             };
 
@@ -278,15 +278,15 @@ namespace Tests.Hands
             {
                 HandCards =
                 [
-                    (CardSymbol.Four, CardSuit.Hart),
-                    (CardSymbol.Five, CardSuit.Hart)
+                    (CardRank.Four, CardSuit.Hart),
+                    (CardRank.Five, CardSuit.Hart)
                 ],
 
                 CommunityCards =
                 [
-                    (CardSymbol.Three, CardSuit.Club),
-                    (CardSymbol.Two, CardSuit.Club),
-                    (CardSymbol.Six, CardSuit.Club),
+                    (CardRank.Three, CardSuit.Club),
+                    (CardRank.Two, CardSuit.Club),
+                    (CardRank.Six, CardSuit.Club),
                 ]
             };
 

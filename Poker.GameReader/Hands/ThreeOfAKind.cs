@@ -56,17 +56,17 @@ public static class ThreeOfAKind
         List<int> cards = new(7);
         foreach (var card in gameData.HandCards)
         {
-            if (card.cardSymbol != CardSymbol.None)
+            if (card.cardRank != CardRank.None)
             {
-                cards.Add(card.cardSymbol);
+                cards.Add(card.cardRank);
             }
         }
 
         foreach (var card in gameData.CommunityCards)
         {
-            if (card.cardSymbol != CardSymbol.None)
+            if (card.cardRank != CardRank.None)
             {
-                cards.Add(card.cardSymbol);
+                cards.Add(card.cardRank);
             }
         }
 

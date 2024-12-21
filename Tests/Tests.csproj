@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Poker.GameReader\Poker.GameReader.csproj" />
+    <ProjectReference Include="..\Poker.GtoBuilder\Poker.GtoBuilder.csproj" />
   </ItemGroup>
 
   <ItemGroup>

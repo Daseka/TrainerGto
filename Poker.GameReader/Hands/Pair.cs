@@ -2,13 +2,13 @@
 
 namespace Poker.GameReader.Hands;
 
-public static class TwoPair
+public static class Pair
 {
     public static bool Assert(IEnumerable<int> cards)
     {
         int pairCount = MaximumPairs(cards.ToList());
 
-        return pairCount >= 2;
+        return pairCount >= 1;
     }
 
     public static double CalculateChance(GameData gameData)
@@ -24,7 +24,7 @@ public static class TwoPair
 
     private static double CalculateChance(int pairCount, int totalCards, GameData gameData)
     {
-        if (pairCount >= 2)
+        if (pairCount >= 1)
         {
             return 1;
         }

@@ -1,5 +1,5 @@
 ﻿using Poker.GameReader.Reporters;
-using static Poker.GameReader.Reporters.CardSymbol;
+using static Poker.GameReader.Reporters.CardRank;
 
 namespace Poker.GameReader.Strategies;
 
@@ -88,7 +88,7 @@ public class UnderTheGun : BaseStrategy
     public override StrategySolution Solve(GameData gameData)
     {
         Suited suited = GetSuitedState(gameData);
-        (int, int, Suited) result = (gameData.HandCards[0].cardSymbol, gameData.HandCards[1].cardSymbol, suited);
+        (int, int, Suited) result = (gameData.HandCards[0].cardRank, gameData.HandCards[1].cardRank, suited);
 
         Raise.TryGetValue(result, out double raise);
         Call.TryGetValue(result, out double call);

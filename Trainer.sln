@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Poker.GameReader", "Poker.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{D220BEF9-1B76-4599-828A-C14318FD1DCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poker.GtoBuilder", "Poker.GtoBuilder\Poker.GtoBuilder.csproj", "{0160458E-8AAD-450A-AF22-EC5F8CB8F501}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{D220BEF9-1B76-4599-828A-C14318FD1DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D220BEF9-1B76-4599-828A-C14318FD1DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D220BEF9-1B76-4599-828A-C14318FD1DCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0160458E-8AAD-450A-AF22-EC5F8CB8F501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0160458E-8AAD-450A-AF22-EC5F8CB8F501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0160458E-8AAD-450A-AF22-EC5F8CB8F501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0160458E-8AAD-450A-AF22-EC5F8CB8F501}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

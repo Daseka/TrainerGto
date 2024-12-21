@@ -1,5 +1,5 @@
 ﻿using Poker.GameReader.Reporters;
-using static Poker.GameReader.Reporters.CardSymbol;
+using static Poker.GameReader.Reporters.CardRank;
 
 namespace Poker.GameReader.Strategies;
 

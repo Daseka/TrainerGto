@@ -249,7 +249,7 @@ public class BigBlind : BaseStrategy
     public override StrategySolution Solve(GameData gameData)
     {
         Suited suited = GetSuitedState(gameData);
-        (int, int, Suited) hand = (gameData.HandCards[0].cardSymbol, gameData.HandCards[1].cardSymbol, suited);
+        (int, int, Suited) hand = (gameData.HandCards[0].cardRank, gameData.HandCards[1].cardRank, suited);
 
         double raise;
         double fold;

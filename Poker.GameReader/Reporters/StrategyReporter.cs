@@ -22,20 +22,18 @@ public class StrategyReporter
 
     private static bool IsAfterFlop(GameData gameData)
     {
-        return gameData.CommunityCards[0] != (CardSymbol.None, CardSuit.None)
-            || gameData.CommunityCards[1] != (CardSymbol.None, CardSuit.None)
-            || gameData.CommunityCards[2] != (CardSymbol.None, CardSuit.None)
-            || gameData.HandCards[0] == (CardSymbol.None, CardSuit.None)
-            || gameData.HandCards[1] == (CardSymbol.None, CardSuit.None);
+        return gameData.CommunityCards[0] != (CardRank.None, CardSuit.None)
+            || gameData.CommunityCards[1] != (CardRank.None, CardSuit.None)
+            || gameData.CommunityCards[2] != (CardRank.None, CardSuit.None)
+            || gameData.HandCards[0] == (CardRank.None, CardSuit.None)
+            || gameData.HandCards[1] == (CardRank.None, CardSuit.None);
     }
 
     private StrategyData GetPostFlopStrategy(GameData gameData)
     {
         var strategyData = new StrategyData();
-        
+
         UpdatePostFlopHandChances(gameData, strategyData);
-
-
 
         var sugestion = new StringBuilder();
         foreach (var hand in strategyData.PostFlopHandChances)
@@ -45,13 +43,11 @@ public class StrategyReporter
                 continue;
             }
 
-            var sugestedBetAmount = GetSugestedBetAmount(hand.Value, gameData);
-
-            sugestion.AppendLine($"{hand.Key,8} {hand.Value * 100.0, 5:F2}% Bet ${sugestedBetAmount:F2}");
+            sugestion.AppendLine($"{hand.Key,8} {hand.Value * 100.0,5:F2}%");
 
             if (hand.Value == 1)
             {
-                // no need to show lower hands only top hand
+                // no need to show made hands only top hand
                 break;
             }
         }
@@ -63,16 +59,11 @@ public class StrategyReporter
         return strategyData;
     }
 
-    private double GetSugestedBetAmount(double handDrawPercentage, GameData gameData)
+    private double CalculatePotOdds(GameData gameData)
     {
-        // if draw is 100% complete then set winchance to 75%
-        double winChance = handDrawPercentage > .50? .50: handDrawPercentage;
-        double pot = gameData.PotTotal;
-        double loseChance = 1 - winChance;
+        double odds = gameData.CallAmount / (gameData.CallAmount + gameData.PotTotal);
 
-        var sugestedBetAmount = (-winChance * pot) / (winChance - loseChance);
-
-        return sugestedBetAmount;
+        return Math.Round(odds, 2);
     }
 
     private static void UpdatePostFlopHandChances(GameData gameData, StrategyData strategyData)
@@ -98,9 +89,9 @@ public class StrategyReporter
 
         //only change sugestion when hand changes or HasBeenRaised changes
         if (_previousGameData.HandCards is null
-            || gameData.HandCards[0].cardSymbol != _previousGameData.HandCards[0].cardSymbol
+            || gameData.HandCards[0].cardRank != _previousGameData.HandCards[0].cardRank
             || gameData.HandCards[0].cardSuit != _previousGameData.HandCards[0].cardSuit
-            || gameData.HandCards[1].cardSymbol != _previousGameData.HandCards[1].cardSymbol
+            || gameData.HandCards[1].cardRank != _previousGameData.HandCards[1].cardRank
             || gameData.HandCards[1].cardSuit != _previousGameData.HandCards[1].cardSuit
             || gameData.HasBeenRaised != _previousGameData.HasBeenRaised)
         {

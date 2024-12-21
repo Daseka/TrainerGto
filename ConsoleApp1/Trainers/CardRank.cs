@@ -1,4 +1,6 @@
-﻿public enum CardSymbol
+﻿namespace GtoTrainer.Trainers;
+
+public enum CardRank
 {
     None = 0,
     Ace = 1,

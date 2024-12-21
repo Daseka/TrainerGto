@@ -10,13 +10,18 @@ public static class Straight
     private const int MinIndexForOpenEndedStraight = 2;
     private const int StraightSize = 5;
 
+    public static bool Assert(IEnumerable<int> cards)
+    {
+        (_, List<int> missingValues) = GetMissingValues(cards);
+
+        return missingValues.Count == 0;
+    }
+
     public static double CalculateChance(GameData gameData)
     {
         List<int> cards = CreateCards(gameData);
 
-        uint bitValueOfNumbers = ConvertToBitValue(cards);
-        (uint bitWindow, int startIndexWindow) = GetMinimumBitsOffInWindow(bitValueOfNumbers, StraightSize);
-        List<int> missingValues = IndexOfMissingValues(bitWindow);
+        (int startIndexWindow, List<int> missingValues) = GetMissingValues(cards);
 
         var chance = CalculateChance(missingValues, cards, startIndexWindow);
 
@@ -84,17 +89,17 @@ public static class Straight
         List<int> cards = new(7);
         foreach (var card in gameData.HandCards)
         {
-            if (card.cardSymbol != CardSymbol.None)
+            if (card.cardRank != CardRank.None)
             {
-                cards.Add(card.cardSymbol);
+                cards.Add(card.cardRank);
             }
         }
 
         foreach (var card in gameData.CommunityCards)
         {
-            if (card.cardSymbol != CardSymbol.None)
+            if (card.cardRank != CardRank.None)
             {
-                cards.Add(card.cardSymbol);
+                cards.Add(card.cardRank);
             }
         }
 
@@ -148,6 +153,15 @@ public static class Straight
         return (bitWindow, windowStartIndex);
     }
 
+    private static (int startIndexWindow, List<int> missingValues) GetMissingValues(IEnumerable<int> cards)
+    {
+        uint bitValueOfNumbers = ConvertToBitValue(cards.ToList());
+        (uint bitWindow, int startIndexWindow) = GetMinimumBitsOffInWindow(bitValueOfNumbers, StraightSize);
+        List<int> missingValues = IndexOfMissingValues(bitWindow);
+
+        return (startIndexWindow, missingValues);
+    }
+
     private static List<int> IndexOfMissingValues(uint minBitsOffInWindow)
     {
         List<int> missingValues = new(5);
@@ -164,18 +178,18 @@ public static class Straight
         return missingValues;
     }
 
-    private static bool IsBackDoorOpenEnded(List<int> missingValues, int startIndexWindow)
-    {
-        return missingValues.Count == 2 
-            && startIndexWindow + StraightSize - 1 == missingValues[1]
-            && missingValues[1] - missingValues[0] == 1;
-    }
-
     private static bool IsBackDoorGutShot(List<int> missingValues, int startIndexWindow)
     {
         return missingValues.Count == 2
             && ((startIndexWindow + StraightSize - 1 == missingValues[1] && missingValues[1] - missingValues[0] != 1)
                 || (startIndexWindow + StraightSize - 1 != missingValues[1] && missingValues[1] - missingValues[0] == 1));
+    }
+
+    private static bool IsBackDoorOpenEnded(List<int> missingValues, int startIndexWindow)
+    {
+        return missingValues.Count == 2
+            && startIndexWindow + StraightSize - 1 == missingValues[1]
+            && missingValues[1] - missingValues[0] == 1;
     }
 
     private static bool IsGutShot(List<int> missingValues, int startIndexWindow)

@@ -12,8 +12,8 @@ namespace Tests.Strategies
             {
                 HandCards =
                 [
-                    (CardSymbol.King,CardSuit.Hart),
-                    (CardSymbol.King,CardSuit.Club)
+                    (CardRank.King,CardSuit.Hart),
+                    (CardRank.King,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
@@ -39,8 +39,8 @@ namespace Tests.Strategies
             {
                 HandCards =
                 [
-                    (CardSymbol.King,CardSuit.Hart),
-                    (CardSymbol.King,CardSuit.Club)
+                    (CardRank.King,CardSuit.Hart),
+                    (CardRank.King,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
@@ -68,8 +68,8 @@ namespace Tests.Strategies
                 BigBlind = 2,
                 HandCards =
                 [
-                    (CardSymbol.Four,CardSuit.Hart),
-                    (CardSymbol.Four,CardSuit.Club)
+                    (CardRank.Four,CardSuit.Hart),
+                    (CardRank.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
@@ -95,8 +95,8 @@ namespace Tests.Strategies
             {
                 HandCards =
                 [
-                    (CardSymbol.Four,CardSuit.Hart),
-                    (CardSymbol.Four,CardSuit.Club)
+                    (CardRank.Four,CardSuit.Hart),
+                    (CardRank.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
@@ -122,8 +122,8 @@ namespace Tests.Strategies
             {
                 HandCards =
                 [
-                    (CardSymbol.Seven,CardSuit.Club),
-                    (CardSymbol.Four,CardSuit.Club)
+                    (CardRank.Seven,CardSuit.Club),
+                    (CardRank.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
@@ -149,8 +149,8 @@ namespace Tests.Strategies
             {
                 HandCards =
                 [
-                    (CardSymbol.Seven,CardSuit.Club),
-                    (CardSymbol.Four,CardSuit.Club)
+                    (CardRank.Seven,CardSuit.Club),
+                    (CardRank.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
@@ -179,8 +179,8 @@ namespace Tests.Strategies
                 BigBlind = 2,
                 HandCards =
                 [
-                    (CardSymbol.Ace,CardSuit.Diamond),
-                    (CardSymbol.Ten,CardSuit.Club)
+                    (CardRank.Ace,CardSuit.Diamond),
+                    (CardRank.Ten,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
@@ -206,8 +206,8 @@ namespace Tests.Strategies
             {
                 HandCards =
                 [
-                    (CardSymbol.Ace,CardSuit.Diamond),
-                    (CardSymbol.Ten,CardSuit.Club)
+                    (CardRank.Ace,CardSuit.Diamond),
+                    (CardRank.Ten,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
@@ -235,8 +235,8 @@ namespace Tests.Strategies
                 BigBlind = 2,
                 HandCards =
                 [
-                    (CardSymbol.King,CardSuit.Diamond),
-                    (CardSymbol.Jack,CardSuit.Club)
+                    (CardRank.King,CardSuit.Diamond),
+                    (CardRank.Jack,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
@@ -262,8 +262,8 @@ namespace Tests.Strategies
             {
                 HandCards =
                 [
-                    (CardSymbol.King,CardSuit.Diamond),
-                    (CardSymbol.Jack,CardSuit.Club)
+                    (CardRank.King,CardSuit.Diamond),
+                    (CardRank.Jack,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 3, 0, 0]
