@@ -1,6 +1,6 @@
 ﻿namespace Poker.GameReader.Reporters;
 
-public static class CardSymbol
+public static class CardRank
 {
     public const int None = 0;
     public const int Ace = 1;

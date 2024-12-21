@@ -1,4 +1,6 @@
-﻿public enum CardSuit
+﻿namespace GtoTrainer.Trainers;
+
+public enum CardSuit
 {
     None = 0,
     Spade = 1,

@@ -4,7 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	<PublishSingleFile>true</PublishSingleFile>
+	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -12,5 +14,20 @@
 		<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
 		<PackageReference Include="Tesseract" Version="5.2.0" />
 		<PackageReference Include="Tesseract.Drawing" Version="5.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 </Project>

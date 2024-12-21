@@ -29,16 +29,13 @@ public class GameStateReporter
     private const int LeftEdgeToPotTotal = 604;
     private const int LeftEdgeToSmallBlind = 1130;
     private const int LeftEdgeToUnderTheGun = 662;
-    private const string LeftHandCards = "Left cards";
 
-    private const string MiddleCards = "Middle cards";
     private const int PotTotalHeight = 34;
     private const int PotTotalWidth = 260;
-    private const string RightHandCards = "Right cards";
     private const int SpaceBetweenCards = 17;
 
-    private const int SymbolAreaHeight = 39;
-    private const int SymbolAreaWidth = 39;
+    private const int RankAreaHeight = 39;
+    private const int RankAreaWidth = 39;
 
     private const int TopEdgeToBigBlind = 350;
     private const int TopEdgeToButton = 724;
@@ -52,9 +49,27 @@ public class GameStateReporter
     private const int TopEdgeToSmallBlind = 694;
     private const int TopEdgeToUnderTheGun = 292;
 
+    private const int PositionWidth = 130;
+    private const int PositionHeight = 26;
+
+    private const int LeftEdgeToBetSeat0 = 700;
+    private const int TopEdgeToBetSeat0 = 685;
+    private const int LeftEdgeToBetSeat1 = 300;
+    private const int TopEdgeToBetSeat1 = 635;
+    private const int LeftEdgeToBetSeat2 = 330;
+    private const int TopEdgeToBetSeat2 = 375;
+    private const int LeftEdgeToBetSeat3 = 680;
+    private const int TopEdgeToBetSeat3 = 325;
+    private const int LeftEdgeToBetSeat4 = 1030;
+    private const int TopEdgeToBetSeat4 = 375;
+    private const int LeftEdgeToBetSeat5 = 1080;
+    private const int TopEdgeToBetSeat5 = 635;
+
     private readonly Dictionary<int, ulong> _leftHandCardHashes;
     private readonly Dictionary<int, ulong> _middleCardHashes;
     private readonly Dictionary<int, ulong> _rightHandCardHashes;
+    private double _smallBlind;
+    private double _bigBlind;
     private readonly ScreenGrabber _screenGrabber;
 
     private Rect _rect;
@@ -62,26 +77,24 @@ public class GameStateReporter
     public GameStateReporter()
     {
         _screenGrabber = new ScreenGrabber();
-        _middleCardHashes = LoadCardHashes(MiddleCards);
-        _leftHandCardHashes = LoadCardHashes(LeftHandCards);
-        _rightHandCardHashes = LoadCardHashes(RightHandCards);
+        _middleCardHashes = LoadCardHashes(CardImages.MiddleImages);
+        _leftHandCardHashes = LoadCardHashes(CardImages.LeftImages);
+        _rightHandCardHashes = LoadCardHashes(CardImages.RightImages);
+
         PreLoadTesseractEngine();
     }
 
-    private static void PreLoadTesseractEngine()
-    {
-        using TesseractEngine engine2 = new(@"tessdata", "eng", EngineMode.Default);
-    }
-
-    public bool ConnectToGame(string gameName)
+    public bool ConnectToGame(string[] gameName)
     {
         List<nint> visibleWindows = WindowHandles.GetVisibleWindows();
         foreach (var handle in visibleWindows)
         {
             var title = WindowHandles.GetWindowTitle(handle);
-            if (title.StartsWith(gameName, StringComparison.InvariantCultureIgnoreCase))
+            if (gameName.Any(name => title.StartsWith(name, StringComparison.InvariantCultureIgnoreCase)))
             {
                 _rect = WindowHandles.GetWindowRect(handle);
+
+                (_smallBlind, _bigBlind) = GetBlindAmounts(title);
 
                 return true;
             }
@@ -90,15 +103,70 @@ public class GameStateReporter
         return false;
     }
 
+    private static (double smallBlind, double bigBlind) GetBlindAmounts(string name)
+    {
+        bool inSecond = false;
+        string smallBlind = string.Empty;
+        string bigBlind = string.Empty;
+        for (int i = 0; i < name.Length; i++)
+        {
+            char leter = name[i];
+            if (leter == '$' && !inSecond)
+            {
+                i++;
+                while (name[i] != ' ')
+                {
+                    smallBlind += name[i];
+                    i++;
+                }
+                inSecond = true;
+            }
+
+            leter = name[i];
+            if (leter == '$' && inSecond)
+            {
+                i++;
+                while (i < name.Length)
+                {
+                    bigBlind += name[i];
+                    i++;
+                }
+            }
+        }
+
+        if (!double.TryParse(smallBlind, out double small))
+        {
+            Console.Write("Error: Getting small blind");
+        }
+
+        if (!double.TryParse(bigBlind, out double big))
+        {
+            Console.Write("Error: Getting bid blind");
+        }
+
+        return (small, big);
+    }
+
     public GameData GetGameState()
     {
         return new GameData
         {
-            MiddleCards = GetMiddleCards(_rect, _screenGrabber),
+            SmallBlind = _smallBlind,
+            BigBlind = _bigBlind,
+            CommunityCards = GetMiddleCards(_rect, _screenGrabber),
             HandCards = GetHandCards(_rect, _screenGrabber),
             CallAmount = GetCallAmount(_rect, _screenGrabber),
             PotTotal = GetPotTotal(_rect, _screenGrabber),
-            Position = GetPosition(_rect, _screenGrabber)
+            Position = GetPosition(_rect, _screenGrabber),
+            Bets =
+            [
+                GetBetSeat(LeftEdgeToBetSeat0,TopEdgeToBetSeat0, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat1,TopEdgeToBetSeat1, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat2,TopEdgeToBetSeat2, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat3,TopEdgeToBetSeat3, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat4,TopEdgeToBetSeat4, _rect, _screenGrabber),
+                GetBetSeat(LeftEdgeToBetSeat5,TopEdgeToBetSeat5, _rect, _screenGrabber),
+            ]
         };
     }
 
@@ -132,7 +200,7 @@ public class GameStateReporter
             }
         }
 
-        return double.TryParse(callAmount.ToString(), out double result) ? result: 0;
+        return double.TryParse(callAmount.ToString(), out double result) ? result : 0;
     }
 
     private static Position GetPosition(Rect rect, ScreenGrabber screenGrabber)
@@ -174,12 +242,30 @@ public class GameStateReporter
 
         y = TopEdgeToCutOff + rect.Top;
         x = LeftEdgeToCutOff + rect.Left;
-        if (TryFindPosition(x, y, screenGrabber))
+
+        return TryFindPosition(x, y, screenGrabber) 
+            ? Position.CutOff 
+            : Position.None;
+    }
+
+    private static double GetBetSeat(int left, int top,Rect rect, ScreenGrabber screenGrabber)
+    {
+        using TesseractEngine engine = new(@"tessdata", "eng", EngineMode.Default);
+        using Bitmap potBitmap = screenGrabber
+            .GrabScreenBlock(left + rect.Left, top + rect.Top, PositionWidth, PositionHeight);
+        using Page page = engine.Process(potBitmap);
+
+        string text = page.GetText();
+        StringBuilder betTotal = new();
+        foreach (char character in text)
         {
-            return Position.CutOff;
+            if (char.IsNumber(character) || character == '.')
+            {
+                _ = betTotal.Append(character);
+            }
         }
 
-        return Position.None;
+        return double.TryParse(betTotal.ToString(), out double result) ? result : 0;
     }
 
     private static double GetPotTotal(Rect rect, ScreenGrabber screenGrabber)
@@ -202,23 +288,28 @@ public class GameStateReporter
         return double.TryParse(potTotal.ToString(), out double result) ? result : 0;
     }
 
-    private static Dictionary<int, ulong> LoadCardHashes(string cardFolderName)
+    private static Dictionary<int, ulong> LoadCardHashes(List<byte[]> cardImages)
     {
-        DirectoryInfo info = new(cardFolderName);
-        FileInfo[] files = info.GetFiles();
-
         var hashes = new Dictionary<int, ulong>();
         PerceptualHash hasher = new();
-        foreach (FileInfo item in files)
+
+        for (int i = 0; i < cardImages.Count; i++)
         {
-            int cardValue = int.TryParse(item.Name[0..^4], out int result) ? result: 0;
-            hashes[cardValue] = hasher.Hash(item.FullName);
+            byte[] cardImage = cardImages[i];
+            MemoryStream memoryStream = new(cardImage);
+            Bitmap bitMap = new(memoryStream);
+            hashes[i + 1] = hasher.Hash(bitMap);
         }
 
         return hashes;
     }
 
-    private static (int cardSymbol, int cardSuit) RunHashComparison(Bitmap bitmap, Dictionary<int, ulong> cardHashes)
+    private static void PreLoadTesseractEngine()
+    {
+        using TesseractEngine engine2 = new(@"tessdata", "eng", EngineMode.Default);
+    }
+
+    private static (int cardRank, int cardSuit) RunHashComparison(Bitmap bitmap, Dictionary<int, ulong> cardHashes)
     {
         Color pixelColor = bitmap.GetPixel(bitmap.Width - 1, bitmap.Height - 1);
 
@@ -229,7 +320,7 @@ public class GameStateReporter
             Color when pixelColor.B > pixelColor.R && pixelColor.B > pixelColor.G => CardSuit.Diamond,
             Color when pixelColor.R > pixelColor.B && pixelColor.R > pixelColor.G => CardSuit.Hart,
             Color when pixelColor.G > pixelColor.R && pixelColor.G > pixelColor.B => CardSuit.Club,
-            _ => 0
+            _ => CardSuit.None
         };
 
         int correctCard = 0;
@@ -250,18 +341,18 @@ public class GameStateReporter
             }
         }
 
-        return highestCertainty < 80 ? (CardSymbol.None, CardSuit.None) : (correctCard, suit);
+        return highestCertainty < 80 ? (CardRank.None, CardSuit.None) : (correctCard, suit);
     }
 
     private static Bitmap[] TakeScreenShotHandCards(Rect rect, ScreenGrabber screenGrabber)
     {
         int y1 = TopEdgeToCardLeftHand + rect.Top;
         int x1 = LeftEdgeToCardLeftHand + rect.Left;
-        Bitmap left = screenGrabber.GrabScreenBlock(x1, y1, SymbolAreaWidth, SymbolAreaHeight);
+        Bitmap left = screenGrabber.GrabScreenBlock(x1, y1, RankAreaWidth, RankAreaHeight);
 
         int y2 = TopEdgeToCardRightHand + rect.Top;
         int x2 = LeftEdgeToCardRightHand + rect.Left;
-        Bitmap right = screenGrabber.GrabScreenBlock(x2, y2, SymbolAreaWidth, SymbolAreaHeight);
+        Bitmap right = screenGrabber.GrabScreenBlock(x2, y2, RankAreaWidth, RankAreaHeight);
 
         return [left, right];
     }
@@ -276,7 +367,7 @@ public class GameStateReporter
         for (int i = 0; i < MiddleCardCount; i++)
         {
             int x = LeftEdgeToCard + rect.Left + SpaceBetweenCards * i + CardWidth * i;
-            Bitmap screenBlock = screenGrabber.GrabScreenBlock(x, y, SymbolAreaWidth, SymbolAreaHeight);
+            Bitmap screenBlock = screenGrabber.GrabScreenBlock(x, y, RankAreaWidth, RankAreaHeight);
 
             middleCards[i] = screenBlock;
         }
@@ -291,7 +382,7 @@ public class GameStateReporter
         return bitmap.GetPixel(1, 1).R > 100;
     }
 
-    private (int cardSymbol, int cardSuit)[] GetHandCards(Rect rect, ScreenGrabber screenGrabber)
+    private (int cardRank, int cardSuit)[] GetHandCards(Rect rect, ScreenGrabber screenGrabber)
     {
         Bitmap[] bitmaps = TakeScreenShotHandCards(rect, screenGrabber);
 
@@ -308,10 +399,10 @@ public class GameStateReporter
         }
     }
 
-    private (int cardSymbol, int cardSuit)[] GetMiddleCards(Rect rect, ScreenGrabber screenGrabber)
+    private (int cardRank, int cardSuit)[] GetMiddleCards(Rect rect, ScreenGrabber screenGrabber)
     {
         Bitmap[] bitmaps = TakeScreenShotMiddleCards(rect, screenGrabber);
-        (int cardSymbol, int cardSuit)[] cards = new (int , int)[bitmaps.Length];
+        (int cardRank, int cardSuit)[] cards = new (int, int)[bitmaps.Length];
 
         for (int i = 0; i < cards.Length; i++)
         {
