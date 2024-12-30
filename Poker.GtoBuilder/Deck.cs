@@ -7,10 +7,15 @@ public class Deck
     private const int CardQuantity = 52;
     private const int HighestRank = 13;
     private int[][] _cards;
+    private Random _randomizer;
     private int _startIndexOfCardsDealt;
 
-    public Deck()
+    public Deck(int? seed = null)
     {
+        _randomizer = seed is null
+            ? new Random()
+            : new Random(seed.Value);
+
         _startIndexOfCardsDealt = CardQuantity - 1;
         _cards = new int[CardQuantity][];
 
@@ -40,22 +45,10 @@ public class Deck
         _startIndexOfCardsDealt = CardQuantity - 1;
     }
 
-    public void Shuffle(int? seed = null)
+    public void Shuffle()
     {
-        int shuffelIndex = _startIndexOfCardsDealt;
-
-        var randomizer = seed is null
-            ? new Random()
-            : new Random(seed.Value);
-
-        while (shuffelIndex > 0)
-        {
-            int indexToSwitch = randomizer.Next(0, shuffelIndex);
-
-            (_cards[indexToSwitch], _cards[shuffelIndex]) = (_cards[shuffelIndex], _cards[indexToSwitch]);
-
-            shuffelIndex--;
-        }
+        var span = new Span<int[]>(_cards, 0, _startIndexOfCardsDealt);
+        _randomizer.Shuffle(span);
     }
 
     public bool TryDeal((Rank, Suit) cardToDeal, out (Rank, Suit) cardDealt)

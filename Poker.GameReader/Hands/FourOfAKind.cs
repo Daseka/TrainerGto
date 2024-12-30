@@ -4,6 +4,13 @@ namespace Poker.GameReader.Hands;
 
 public static class FourOfAKind
 {
+    public static bool Assert(IEnumerable<int> cards)
+    {
+        var maximumOfAKind = CalculateMaximumOfAKind(cards.ToList());
+
+        return maximumOfAKind >= 4;
+    }
+
     public static double CalculateChance(GameData gameData)
     {
         var cards = CreateCards(gameData);
@@ -13,22 +20,6 @@ public static class FourOfAKind
         double chance = CalculateChance(maximumOfAKind, totalCards, gameData);
 
         return chance;
-
-    }
-
-    private static int CalculateMaximumOfAKind(List<int> cards)
-    {
-        int[] cardCounts = new int[14];
-        
-        int maximumOfAKind = 0;
-        foreach (var card in cards)
-        {
-            cardCounts[card]++;
-
-            maximumOfAKind = Math.Max(maximumOfAKind, cardCounts[card]);
-        }
-
-        return maximumOfAKind;
     }
 
     private static double CalculateChance(int maximumOfAKind, int totalCards, GameData gameData)
@@ -48,7 +39,7 @@ public static class FourOfAKind
             return 0.001;
         }
 
-        if (maximumOfAKind == 3 && (totalCards == 5|| totalCards == 6))
+        if (maximumOfAKind == 3 && (totalCards == 5 || totalCards == 6))
         {
             return 0.02;
         }
@@ -56,12 +47,27 @@ public static class FourOfAKind
         return 0;
     }
 
+    private static int CalculateMaximumOfAKind(List<int> cards)
+    {
+        int[] cardCounts = new int[14];
+
+        int maximumOfAKind = 0;
+        foreach (var card in cards)
+        {
+            cardCounts[card]++;
+
+            maximumOfAKind = Math.Max(maximumOfAKind, cardCounts[card]);
+        }
+
+        return maximumOfAKind;
+    }
+
     private static List<int> CreateCards(GameData gameData)
     {
         List<int> cards = new(7);
         foreach (var card in gameData.HandCards)
         {
-            if (card.cardRank!= CardRank.None)
+            if (card.cardRank != CardRank.None)
             {
                 cards.Add(card.cardRank);
             }

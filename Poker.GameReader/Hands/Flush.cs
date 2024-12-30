@@ -1,8 +1,26 @@
 ﻿using Poker.GameReader.Reporters;
 
 namespace Poker.GameReader.Hands;
+
 public static class Flush
 {
+    public static bool Assert(IEnumerable<int> suits)
+    {
+        var cardSuits = new int[5];
+        int max = 0;
+        foreach (int suit in suits)
+        {
+            if (suit != 0)
+            {
+                cardSuits[suit]++;
+                max = Math.Max(max, cardSuits[suit]);
+            }
+        }
+
+
+        return max >= 5;
+    }
+
     public static double CalculateChance(GameData gameData)
     {
         var cards = CreateCards(gameData);
@@ -21,7 +39,7 @@ public static class Flush
             return 1;
         }
 
-        if (totalCards - maximumSuited > 2 )
+        if (totalCards - maximumSuited > 2)
         {
             return 0;
         }
@@ -40,7 +58,6 @@ public static class Flush
         {
             return 0.19;
         }
-
 
         return 0;
     }
@@ -64,4 +81,3 @@ public static class Flush
         return suits;
     }
 }
-

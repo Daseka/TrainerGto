@@ -105,18 +105,18 @@ public class DeckTest
     [Fact]
     public void WhenShuffeldWithSeed1234()
     {
-        var deck = new Deck();
-        deck.Shuffle(1234);
+        var deck = new Deck(1234);
+        deck.Shuffle();
 
         var cards = deck.Peek(4);
 
         Assert.Multiple(() =>
         {
-            Assert.Equal(cards[0], (Rank.Queen, Suit.Diamond));
-            Assert.Equal(cards[1], (Rank.Two, Suit.Hart));
-            Assert.Equal(cards[2], (Rank.Jack, Suit.Diamond));
-            Assert.Equal(cards[3], (Rank.Eight, Suit.Club));
-            Assert.Equal(cards[4], (Rank.Six, Suit.Club));
+            Assert.Equal(cards[0], (Rank.Eight, Suit.Hart));
+            Assert.Equal(cards[1], (Rank.Seven, Suit.Spade));
+            Assert.Equal(cards[2], (Rank.Five, Suit.Hart));
+            Assert.Equal(cards[3], (Rank.Ten, Suit.Spade));
+            Assert.Equal(cards[4], (Rank.Seven, Suit.Hart));
         });
     }
 }
