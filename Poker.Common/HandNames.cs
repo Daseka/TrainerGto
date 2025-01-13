@@ -1,4 +1,4 @@
-﻿namespace Poker.GtoBuilder;
+﻿namespace Poker.Common;
 
 public static class HandNames
 {

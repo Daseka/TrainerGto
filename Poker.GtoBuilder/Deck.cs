@@ -1,4 +1,4 @@
-﻿using Poker.GtoBuilder.CardDisplay;
+﻿using Poker.Common;
 
 namespace Poker.GtoBuilder;
 
@@ -24,15 +24,15 @@ public class Deck
 
     public (Rank, Suit)[] GetRemaining()
     {
-        return Peek(_startIndexOfCardsDealt);
+        return Peek(_startIndexOfCardsDealt + 1);
     }
 
     public (Rank, Suit)[] Peek(int count)
     {
         count = Math.Min(CardQuantity, count);
 
-        var cardsLeftInDeck = new (Rank, Suit)[count + 1];
-        for (int i = 0; i <= count; i++)
+        var cardsLeftInDeck = new (Rank, Suit)[count];
+        for (int i = 0; i < count; i++)
         {
             cardsLeftInDeck[i] = ((Rank)_cards[i][0], (Suit)_cards[i][1]);
         }

@@ -1,13 +1,12 @@
-﻿using Poker.GameReader.Hands;
-using Poker.GtoBuilder.CardDisplay;
-using System.Numerics;
+﻿using Poker.Common;
+using Poker.Common.Hands;
 
 namespace Poker.GtoBuilder;
 
 public class HandRanker
 {
     private const int MaxCards = 7;
-    private const int Maximum = 1000000;
+    private const int Maximum = 100000;
     private readonly Deck _deckOfCards;
 
     private readonly Dictionary<string, double> _probabilities;
@@ -28,16 +27,18 @@ public class HandRanker
         };
     }
 
-    public Dictionary<string, double> CalculateProbabilities((Rank, Suit)[] knownCards)
+    public Dictionary<string, double> CalculateProbabilities(IEnumerable<(Rank, Suit)> knownCards)
     {
-        int length = Math.Min(knownCards.Length, MaxCards);
+        var cards = knownCards.Where(x => x.Item1 != Rank.None).ToArray();
+
+        int length = Math.Min(cards.Length, MaxCards);
         var hand = new (Rank, Suit)[length];
 
         ResetProbabilities();
 
         for (int i = 0; i < length; i++)
         {
-            _deckOfCards.TryDeal(knownCards[i], out hand[i]);
+            _deckOfCards.TryDeal(cards[i], out hand[i]);
         }
 
         for (int i = 0; i < Maximum; i++)
@@ -59,37 +60,37 @@ public class HandRanker
 
     public bool IsFlush(IEnumerable<(Rank rank, Suit suit)> hand)
     {
-        return Flush.Assert(hand.Select(x => (int)x.suit));
+        return Flush.Assert(hand.Select(x => (int)x.suit).Where(x => x != 0));
     }
 
     public bool IsFourOfAKind(IEnumerable<(Rank rank, Suit suit)> hand)
     {
-        return FourOfAKind.Assert(hand.Select(x => (int)x.rank));
+        return FourOfAKind.Assert(hand.Select(x => (int)x.rank).Where(x => x != 0));
     }
 
     public bool IsFullHouse(IEnumerable<(Rank rank, Suit suit)> hand)
     {
-        return FullHouse.Assert(hand.Select(x => (int)x.rank));
+        return FullHouse.Assert(hand.Select(x => (int)x.rank).Where(x => x != 0));
     }
 
     public bool IsPair(IEnumerable<(Rank rank, Suit suit)> hand)
     {
-        return Pair.Assert(hand.Select(x => (int)x.rank));
+        return Pair.Assert(hand.Select(x => (int)x.rank).Where(x => x != 0));
     }
 
     public bool IsStraight(IEnumerable<(Rank rank, Suit suit)> hand)
     {
-        return Straight.Assert(hand.Select(x => (int)x.rank));
+        return Straight.Assert(hand.Select(x => (int)x.rank).Where(x => x != 0));
     }
 
     public bool IsThreeOfAKind(IEnumerable<(Rank rank, Suit suit)> hand)
     {
-        return ThreeOfAKind.Assert(hand.Select(x => (int)x.rank));
+        return ThreeOfAKind.Assert(hand.Select(x => (int)x.rank).Where(x => x != 0));
     }
 
     public bool IsTwoPair(IEnumerable<(Rank rank, Suit suit)> hand)
     {
-        return TwoPair.Assert(hand.Select(x => (int)x.rank));
+        return TwoPair.Assert(hand.Select(x => (int)x.rank).Where(x => x != 0));
     }
 
     private void ResetProbabilities()
@@ -106,33 +107,33 @@ public class HandRanker
         {
             _probabilities[HandNames.FourOfAKind]++;
         }
-        else if (IsFullHouse(hand))
+        if (IsFullHouse(hand))
         {
             _probabilities[HandNames.FullHouse]++;
         }
-        else if (IsFlush(hand))
+        if (IsFlush(hand))
         {
             _probabilities[HandNames.Flush]++;
         }
-        else if (IsStraight(hand))
+        if (IsStraight(hand))
         {
             _probabilities[HandNames.Straight]++;
         }
-        else if (IsThreeOfAKind(hand))
+        if (IsThreeOfAKind(hand))
         {
             _probabilities[HandNames.ThreeOfAKind]++;
         }
-        else if (IsTwoPair(hand))
+        if (IsTwoPair(hand))
         {
             _probabilities[HandNames.TwoPair]++;
         }
-        else if (IsPair(hand))
+        if (IsPair(hand))
         {
             _probabilities[HandNames.Pair]++;
         }
-        else
-        {
-            _probabilities[HandNames.HighCard]++;
-        }
+        //else
+        //{
+        //    _probabilities[HandNames.HighCard]++;
+        //}
     }
 }

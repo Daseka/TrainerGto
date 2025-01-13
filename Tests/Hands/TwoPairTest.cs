@@ -1,4 +1,4 @@
-﻿using Poker.GameReader.Hands;
+﻿using Poker.Common.Hands;
 using Poker.GameReader.Reporters;
 
 namespace Tests.Hands;
@@ -26,7 +26,7 @@ public class TwoPairTest
             ]
         };
 
-        double chance = TwoPair.CalculateChance(gameData);
+        double chance = TwoPair.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0, chance);
     }
@@ -52,7 +52,7 @@ public class TwoPairTest
             ]
         };
 
-        double chance = TwoPair.CalculateChance(gameData);
+        double chance = TwoPair.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.008, chance);
     }
@@ -78,7 +78,7 @@ public class TwoPairTest
             ]
         };
 
-        double chance = TwoPair.CalculateChance(gameData);
+        double chance = TwoPair.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.06, chance);
     }
@@ -104,7 +104,7 @@ public class TwoPairTest
             ]
         };
 
-        double chance = TwoPair.CalculateChance(gameData);
+        double chance = TwoPair.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.06, chance);
     }
@@ -130,7 +130,7 @@ public class TwoPairTest
             ]
         };
 
-        double chance = TwoPair.CalculateChance(gameData);
+        double chance = TwoPair.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(1, chance);
     }

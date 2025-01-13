@@ -1,14 +1,15 @@
-﻿using Poker.GameReader.Hands;
+﻿using Poker.Common;
 using Poker.GameReader.Strategies;
-using SixLabors.ImageSharp.Metadata.Profiles.Exif;
-using System;
+using Poker.GtoBuilder;
 using System.Text;
 
 namespace Poker.GameReader.Reporters;
 
 public class StrategyReporter
 {
+    private const string NoStrategy = "No Strategy";
     private int _lastPick;
+    private StrategyData _lastStrategyData;
     private GameData _previousGameData;
 
     public StrategyData GetStrategy(GameData gameData)
@@ -29,52 +30,69 @@ public class StrategyReporter
             || gameData.HandCards[1] == (CardRank.None, CardSuit.None);
     }
 
-    private StrategyData GetPostFlopStrategy(GameData gameData)
+    private static StrategyData RunWinChanceSimulation(GameData gameData)
     {
         var strategyData = new StrategyData();
+        var handSimulator = new HandSimulator();
 
-        UpdatePostFlopHandChances(gameData, strategyData);
+        IEnumerable<(Rank, Suit)> knownCards = gameData.HandCards
+            .Concat(gameData.CommunityCards)
+            .Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
 
-        var sugestion = new StringBuilder();
-        foreach (var hand in strategyData.PostFlopHandChances)
+        var handCards = gameData.HandCards.Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
+        var bets = gameData.Bets.Where(x => x > 0).Select(x => (int)x);
+        var communityCards = gameData.CommunityCards.Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
+        var (win, draw, loss) = handSimulator.SimulateWinChance([.. handCards], [.. bets], [.. communityCards]);
+
+        strategyData.PostFlopHandChances = new Dictionary<string, double>
         {
-            if (hand.Value == 0 )
-            {
-                continue;
-            }
-
-            sugestion.AppendLine($"{hand.Key,8} {hand.Value * 100.0,5:F2}%");
-
-            if (hand.Value == 1)
-            {
-                // no need to show made hands only top hand
-                break;
-            }
-        }
-
-        strategyData.SugestedAction = sugestion.Length == 0 
-            ? "No Strategy" 
-            : sugestion.ToString();
+            { "Win", win},
+            { "Draw", draw},
+            { "Loss", loss},
+        };
 
         return strategyData;
     }
 
-    private double CalculatePotOdds(GameData gameData)
+    private StrategyData GetPostFlopStrategy(GameData gameData)
     {
-        double odds = gameData.CallAmount / (gameData.CallAmount + gameData.PotTotal);
+        if (gameData.HandCards.Length == 0 || gameData.HandCards[0].cardRank == (int)Rank.None)
+        {
+            return new StrategyData
+            {
+                SugestedAction = NoStrategy
+            };
+        }
 
-        return Math.Round(odds, 2);
-    }
+        //only simulate win chances when its my turn to act and community cards have changed
+        if (gameData.CallAmount > 0 && HaveCommunityCardsChanged(gameData))
+        {
+            _previousGameData = gameData;
+            _lastStrategyData = RunWinChanceSimulation(gameData);
 
-    private static void UpdatePostFlopHandChances(GameData gameData, StrategyData strategyData)
-    {
-        strategyData.PostFlopHandChances[Hand.FourOfAKind] = FourOfAKind.CalculateChance(gameData);
-        strategyData.PostFlopHandChances[Hand.FullHouse] = FullHouse.CalculateChance(gameData);
-        strategyData.PostFlopHandChances[Hand.Flush] = Flush.CalculateChance(gameData);
-        strategyData.PostFlopHandChances[Hand.Straight] = Straight.CalculateChance(gameData);
-        strategyData.PostFlopHandChances[Hand.ThreeOfAKind] = ThreeOfAKind.CalculateChance(gameData);
-        strategyData.PostFlopHandChances[Hand.TwoPair] = TwoPair.CalculateChance(gameData);
-        strategyData.PostFlopHandChances[Hand.OnePair] = TwoOfAKind.CalculateChance(gameData);
+            var sugestion = new StringBuilder();
+            foreach (var hand in _lastStrategyData.PostFlopHandChances.OrderByDescending(x => x.Value))
+            {
+                if (hand.Value == 0)
+                {
+                    continue;
+                }
+
+                sugestion.AppendLine($"{hand.Key,13} {hand.Value,5:F2}%");
+
+                if (hand.Value == 1)
+                {
+                    // no need to show made hands only top hand
+                    break;
+                }
+            }
+
+            _lastStrategyData.SugestedAction = sugestion.Length == 0
+                ? NoStrategy
+                : sugestion.ToString();
+        }
+
+        return _lastStrategyData;
     }
 
     private StrategyData GetPreFlopStrategy(GameData gameData)
@@ -102,7 +120,7 @@ public class StrategyReporter
         }
 
         string onlyAThought = string.Empty;
-        if (gameData.CallAmount <= 0 )
+        if (gameData.CallAmount <= 0)
         {
             onlyAThought = "Thinking";
         }
@@ -138,5 +156,20 @@ public class StrategyReporter
         };
 
         return strategyData;
+    }
+
+    private bool HaveCommunityCardsChanged(GameData gameData)
+    {
+        return (_previousGameData.HandCards is null
+            || gameData.CommunityCards[0].cardRank != _previousGameData.CommunityCards[0].cardRank
+            || gameData.CommunityCards[0].cardSuit != _previousGameData.CommunityCards[0].cardSuit
+            || gameData.CommunityCards[1].cardRank != _previousGameData.CommunityCards[1].cardRank
+            || gameData.CommunityCards[1].cardSuit != _previousGameData.CommunityCards[1].cardSuit
+            || gameData.CommunityCards[2].cardRank != _previousGameData.CommunityCards[2].cardRank
+            || gameData.CommunityCards[2].cardSuit != _previousGameData.CommunityCards[2].cardSuit
+            || gameData.CommunityCards[3].cardRank != _previousGameData.CommunityCards[3].cardRank
+            || gameData.CommunityCards[3].cardSuit != _previousGameData.CommunityCards[3].cardSuit
+            || gameData.CommunityCards[4].cardRank != _previousGameData.CommunityCards[4].cardRank
+            || gameData.CommunityCards[4].cardSuit != _previousGameData.CommunityCards[4].cardSuit)
     }
 }

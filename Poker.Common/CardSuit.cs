@@ -1,4 +1,4 @@
-﻿namespace Poker.GtoBuilder.CardDisplay;
+﻿namespace Poker.Common;
 
 public enum Suit
 {
@@ -8,3 +8,4 @@ public enum Suit
     Club,
     Spade,
 }
+

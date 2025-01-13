@@ -1,5 +1,5 @@
-﻿using Poker.GtoBuilder;
-using Poker.GtoBuilder.CardDisplay;
+﻿using Poker.Common;
+using Poker.GtoBuilder;
 
 namespace Tests.Decks;
 

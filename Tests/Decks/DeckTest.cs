@@ -1,5 +1,5 @@
-﻿using Poker.GtoBuilder;
-using Poker.GtoBuilder.CardDisplay;
+﻿using Poker.Common;
+using Poker.GtoBuilder;
 
 namespace Tests.Decks;
 
@@ -116,7 +116,6 @@ public class DeckTest
             Assert.Equal(cards[1], (Rank.Seven, Suit.Spade));
             Assert.Equal(cards[2], (Rank.Five, Suit.Hart));
             Assert.Equal(cards[3], (Rank.Ten, Suit.Spade));
-            Assert.Equal(cards[4], (Rank.Seven, Suit.Hart));
         });
     }
 }

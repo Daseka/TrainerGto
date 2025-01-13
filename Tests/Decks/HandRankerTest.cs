@@ -1,12 +1,11 @@
-﻿using Poker.GtoBuilder;
-using Poker.GtoBuilder.CardDisplay;
+﻿using Poker.Common;
+using Poker.GtoBuilder;
 using System.Diagnostics;
 
 namespace Tests.Decks;
 
 public class HandRankerTest
 {
-    private const int Maximum = 100000;
 
     [Fact]
     public void MilionRunTest()
@@ -27,12 +26,8 @@ public class HandRankerTest
         var ranks = handRanker.CalculateProbabilities(cards);
 
         stopWatch.Stop();
-
-        var results = ranks.OrderByDescending(x=> x.Value).Select(x => (Math.Round((double)x.Value / Maximum * 100, 2), x.Key)).ToList();
-        foreach (var res in results)
-        {
-            Debug.WriteLine($"{res.Item1,5}% {res.Key}");
-        }
+        
+        
 
         Debug.WriteLine($"{stopWatch.Elapsed.TotalSeconds} s");
     }

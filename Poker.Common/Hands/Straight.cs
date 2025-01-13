@@ -1,7 +1,7 @@
-﻿using Poker.GameReader.Reporters;
+﻿using static Poker.Common.HandValues;
 using System.Numerics;
 
-namespace Poker.GameReader.Hands;
+namespace Poker.Common.Hands;
 
 public static class Straight
 {
@@ -17,15 +17,31 @@ public static class Straight
         return missingValues.Count == 0;
     }
 
-    public static double CalculateChance(GameData gameData)
+    public static double CalculateChance(IEnumerable<(int rank, int suit)> hand)
     {
-        List<int> cards = CreateCards(gameData);
+        List<int> cards = CreateCards(hand);
 
         (int startIndexWindow, List<int> missingValues) = GetMissingValues(cards);
 
         var chance = CalculateChance(missingValues, cards, startIndexWindow);
 
         return chance;
+    }
+
+    public static long Score(IEnumerable<int> cards)
+    {
+        int score = StraightScore([.. cards]);
+
+        return score > 0
+            ? StraightValue + score
+            : 0;
+    }
+
+    private static int StraightScore(IEnumerable<int> cards)
+    {
+        (int startIndexWindow, List<int> missingValues) = GetMissingValues(cards);
+
+        return missingValues.Count == 0 ? startIndexWindow + 4 : 0;
     }
 
     private static double CalculateChance(List<int> missingValues, List<int> cards, int startIndexWindow)
@@ -84,22 +100,14 @@ public static class Straight
         return bitValueOfNumbers;
     }
 
-    private static List<int> CreateCards(GameData gameData)
+    private static List<int> CreateCards(IEnumerable<(int rank, int suit)> hand)
     {
         List<int> cards = new(7);
-        foreach (var card in gameData.HandCards)
+        foreach (var card in hand.Select(x => x.rank))
         {
-            if (card.cardRank != CardRank.None)
+            if (card != (int)Rank.None)
             {
-                cards.Add(card.cardRank);
-            }
-        }
-
-        foreach (var card in gameData.CommunityCards)
-        {
-            if (card.cardRank != CardRank.None)
-            {
-                cards.Add(card.cardRank);
+                cards.Add(card);
             }
         }
 
@@ -130,11 +138,10 @@ public static class Straight
             {
                 min = missing;
                 bitWindow = bitsOffInWindow;
-                windowStartIndex = i;
 
                 if (min == 0)
                 {
-                    break;
+                    windowStartIndex = i;
                 }
             }
 

@@ -1,4 +1,4 @@
-﻿using Poker.GameReader.Hands;
+﻿using Poker.Common.Hands;
 using Poker.GameReader.Reporters;
 
 namespace Tests.Hands
@@ -27,7 +27,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.17, chance);
         }
@@ -54,7 +54,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.02, chance);
         }
@@ -81,7 +81,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.04, chance);
         }
@@ -108,7 +108,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.09, chance);
         }
@@ -135,7 +135,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.17, chance);
         }
@@ -162,7 +162,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0, chance);
         }
@@ -189,7 +189,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0, chance);
         }
@@ -215,7 +215,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.17, chance);
         }
@@ -240,7 +240,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.32, chance);
         }
@@ -265,7 +265,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(1, chance);
         }
@@ -290,7 +290,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = Straight.CalculateChance(gameData);
+            double chance = Straight.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(1, chance);
         }

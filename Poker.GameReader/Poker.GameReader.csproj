@@ -10,10 +10,15 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SixLabors.ImageSharp"/>
+		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="System.Drawing.Common" />
 		<PackageReference Include="Tesseract" />
 		<PackageReference Include="Tesseract.Drawing" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Poker.Common\Poker.Common.csproj" />
+	  <ProjectReference Include="..\Poker.GtoBuilder\Poker.GtoBuilder.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

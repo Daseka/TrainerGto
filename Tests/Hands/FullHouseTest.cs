@@ -1,4 +1,4 @@
-﻿using Poker.GameReader.Hands;
+﻿using Poker.Common.Hands;
 using Poker.GameReader.Reporters;
 
 namespace Tests.Hands;
@@ -26,7 +26,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0, chance);
     }
@@ -52,7 +52,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0, chance);
     }
@@ -78,7 +78,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0, chance);
     }
@@ -104,7 +104,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.0009, chance);
     }
@@ -130,7 +130,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.07, chance);
     }
@@ -156,7 +156,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.07, chance);
     }
@@ -182,7 +182,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.04, chance);
     }
@@ -208,7 +208,7 @@ public class FullHouseTest
             ]
         };
 
-        double chance = FullHouse.CalculateChance(gameData);
+        double chance = FullHouse.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.04, chance);
     }
