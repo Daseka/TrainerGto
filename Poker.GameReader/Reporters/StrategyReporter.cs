@@ -25,9 +25,7 @@ public class StrategyReporter
     {
         return gameData.CommunityCards[0] != (CardRank.None, CardSuit.None)
             || gameData.CommunityCards[1] != (CardRank.None, CardSuit.None)
-            || gameData.CommunityCards[2] != (CardRank.None, CardSuit.None)
-            || gameData.HandCards[0] == (CardRank.None, CardSuit.None)
-            || gameData.HandCards[1] == (CardRank.None, CardSuit.None);
+            || gameData.CommunityCards[2] != (CardRank.None, CardSuit.None);
     }
 
     private static StrategyData RunWinChanceSimulation(GameData gameData)
@@ -40,9 +38,10 @@ public class StrategyReporter
             .Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
 
         var handCards = gameData.HandCards.Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
-        var bets = gameData.Bets.Where(x => x > 0).Select(x => (int)x);
-        var communityCards = gameData.CommunityCards.Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
-        var (win, draw, loss) = handSimulator.SimulateWinChance([.. handCards], [.. bets], [.. communityCards]);
+        var villains = gameData.VillainsPlaying.Where(x => x).Select(x => 100);
+        var communityCards = gameData.CommunityCards.Where(x => x.cardSuit != (int)Suit.None).Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
+
+        var (win, draw, loss) = handSimulator.SimulateWinChance([.. handCards], [.. villains], [.. communityCards]);
 
         strategyData.PostFlopHandChances = new Dictionary<string, double>
         {
@@ -65,7 +64,7 @@ public class StrategyReporter
         }
 
         //only simulate win chances when its my turn to act and community cards have changed
-        if (gameData.CallAmount > 0 && HaveCommunityCardsChanged(gameData))
+        if (gameData.CallAmount > -1 && HaveCommunityCardsChanged(gameData))
         {
             _previousGameData = gameData;
             _lastStrategyData = RunWinChanceSimulation(gameData);
@@ -78,7 +77,7 @@ public class StrategyReporter
                     continue;
                 }
 
-                sugestion.AppendLine($"{hand.Key,13} {hand.Value,5:F2}%");
+                sugestion.AppendLine($"{hand.Key,6} {hand.Value,5:F2}%");
 
                 if (hand.Value == 1)
                 {
@@ -91,6 +90,9 @@ public class StrategyReporter
                 ? NoStrategy
                 : sugestion.ToString();
         }
+
+        //clear cached preflop data since nolonger relevant
+        _lastPick= 0;
 
         return _lastStrategyData;
     }
@@ -155,6 +157,9 @@ public class StrategyReporter
             SugestedAction = suggestion
         };
 
+        //clear cached postflop data since nolonger relevant
+        _lastStrategyData.SugestedAction = NoStrategy;
+
         return strategyData;
     }
 
@@ -170,6 +175,6 @@ public class StrategyReporter
             || gameData.CommunityCards[3].cardRank != _previousGameData.CommunityCards[3].cardRank
             || gameData.CommunityCards[3].cardSuit != _previousGameData.CommunityCards[3].cardSuit
             || gameData.CommunityCards[4].cardRank != _previousGameData.CommunityCards[4].cardRank
-            || gameData.CommunityCards[4].cardSuit != _previousGameData.CommunityCards[4].cardSuit)
+            || gameData.CommunityCards[4].cardSuit != _previousGameData.CommunityCards[4].cardSuit);
     }
 }

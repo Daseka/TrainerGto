@@ -41,15 +41,15 @@ public class HandSimulatorTests
 
         var heroHand = new (Rank, Suit)[]
         {
-            (Rank.King, Suit.Spade),
+            (Rank.King, Suit.Hart),
             (Rank.King, Suit.Diamond),
         };
 
         var community = new List<(Rank, Suit)>
         {
-            (Rank.Four, Suit.Club),
-            (Rank.Three, Suit.Club),
-            (Rank.Two, Suit.Club),
+            (Rank.Six, Suit.Club),
+            (Rank.Eight, Suit.Diamond),
+            (Rank.Seven, Suit.Club),
         };
 
         var stop = Stopwatch.StartNew();

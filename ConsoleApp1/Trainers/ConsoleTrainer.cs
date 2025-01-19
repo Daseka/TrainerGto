@@ -1,5 +1,7 @@
-﻿using Poker.GameReader.Reporters;
+﻿using Poker.Common;
+using Poker.GameReader.Reporters;
 using System.Diagnostics;
+using System.Text;
 
 namespace GtoTrainer.Trainers;
 
@@ -8,7 +10,7 @@ internal class ConsoleTrainer
     const int Seconds = 2;
     private static readonly string[] WindowNames = ["NLH", "Rush"];
 
-    public static void RunConsoleTrainer()
+    public static Task RunConsoleTrainer()
     {
         StartAnalysisOnTimer(Seconds);
 
@@ -24,6 +26,8 @@ internal class ConsoleTrainer
             var strategyReporter = new StrategyReporter();
             PrintGameStateReport(gameStateReporter, strategyReporter);
         } while (true);
+
+        return Task.CompletedTask;
     }
 
     private static string GetCardString((int cardRank, int cardSuit) middleCard)
@@ -36,7 +40,19 @@ internal class ConsoleTrainer
             : $"{rank} {suit}";
     }
 
-    private static void PrintGameStateReport(GameStateReporter gameStateReporter, StrategyReporter strategyReporter)
+    private static string GetFoldedList(GameData gameData)
+    {
+        bool[] playing = [gameData.HandCards[0].cardRank != (int)Rank.None, .. gameData.VillainsPlaying];
+        var stringBuilder = new StringBuilder();
+        foreach (bool item in playing)
+        {
+            stringBuilder.Append(item ? "1 " : "0 ");
+        }
+
+        return stringBuilder.ToString();
+    }
+
+    private static Task PrintGameStateReport(GameStateReporter gameStateReporter, StrategyReporter strategyReporter)
     {
         Stopwatch stopwatch = new();
         stopwatch.Restart();
@@ -44,13 +60,17 @@ internal class ConsoleTrainer
         if (!gameStateReporter.ConnectToGame(WindowNames))
         {
             Console.WriteLine($"No window found starting with: {string.Join(",", WindowNames)}");
-            return;
+            return Task.CompletedTask;
         }
 
         GameData gameData = gameStateReporter.GetGameState();
         StrategyData strategyData = strategyReporter.GetStrategy(gameData);
 
         Console.Clear();
+
+        Console.WriteLine($"{Environment.NewLine}=== Playing ===");
+        string stillPlaying = GetFoldedList(gameData);
+        Console.WriteLine(stillPlaying);
 
         Console.WriteLine($"{Environment.NewLine}=== Bet amounts ===");
         Console.WriteLine(string.Join(' ', gameData.Bets));
@@ -81,9 +101,11 @@ internal class ConsoleTrainer
 
         stopwatch.Stop();
         Console.WriteLine($"--Time: {stopwatch.Elapsed.TotalSeconds}--");
+
+        return Task.CompletedTask;
     }
 
-    private static System.Timers.Timer StartAnalysisOnTimer(int seconds)
+    private static Task<System.Timers.Timer> StartAnalysisOnTimer(int seconds)
     {
         var timer = new System.Timers.Timer
         {
@@ -105,7 +127,7 @@ internal class ConsoleTrainer
 
         timer.Start();
 
-        return timer;
+        return Task.FromResult(timer);
     }
 
     private static void WritePercentageLine(StrategyData strategyData)

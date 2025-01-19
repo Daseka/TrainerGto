@@ -6,8 +6,6 @@ namespace Poker.GtoBuilder;
 
 public class HandScorer
 {
-    
-
     public static long ScoreHand((Rank rank, Suit suit)[] handCards, (Rank, Suit)[] communityCards)
     {
         long score = 0;
@@ -45,6 +43,10 @@ public class HandScorer
         {
             score = pair ;
         }
+        else if (TryScoreHighCard(hand, out long highCard))
+        {
+            score = highCard;
+        }
 
         return score;
     }
@@ -52,6 +54,13 @@ public class HandScorer
     private static bool IsFlush(IEnumerable<(Rank rank, Suit suit)> hand)
     {
         return Flush.Assert(hand.Select(x => (int)x.suit).Where(x => x != 0));
+    }
+
+    private static bool TryScoreHighCard(IEnumerable<(Rank rank, Suit suit)> hand, out long score)
+    {
+        score = (long)hand.Select(x => x.rank).Max();
+
+        return score > 0;
     }
 
     private static bool TryScoreFourOfAKind(IEnumerable<(Rank rank, Suit suit)> hand, out long score)

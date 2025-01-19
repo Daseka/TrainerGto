@@ -38,6 +38,8 @@ public class HandSimulator(int? seed = null)
 
         for (int i = 0; i < MaxSimulations; i++)
         {
+            //var task = new System.Threading.Thread
+            
             var peekedCards = _deck.Peek(villainCardCount + missingCommunityCardCount);
             (Rank, Suit)[] fullCommunityCards = [.. communityCards, .. peekedCards.Take(missingCommunityCardCount)];
             long heroScore = HandScorer.ScoreHand(hand, [.. fullCommunityCards]);
