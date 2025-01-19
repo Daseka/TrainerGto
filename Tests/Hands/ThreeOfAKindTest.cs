@@ -1,4 +1,4 @@
-﻿using Poker.GameReader.Hands;
+﻿using Poker.Common.Hands;
 using Poker.GameReader.Reporters;
 
 namespace Tests.Hands
@@ -26,7 +26,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = ThreeOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0, chance);
         }
@@ -52,7 +52,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = ThreeOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.003, chance);
         }
@@ -78,7 +78,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = ThreeOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(1, chance);
         }
@@ -104,7 +104,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = ThreeOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(1, chance);
         }
@@ -130,7 +130,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = ThreeOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.04, chance);
         }
@@ -156,7 +156,7 @@ namespace Tests.Hands
                 ]
             };
 
-            double chance = ThreeOfAKind.CalculateChance(gameData);
+            double chance = ThreeOfAKind.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
             Assert.Equal(0.04, chance);
         }

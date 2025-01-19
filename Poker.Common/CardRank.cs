@@ -1,8 +1,8 @@
-﻿namespace Poker.GtoBuilder.CardDisplay;
+﻿namespace Poker.Common;
 
 public enum Rank
 {
-    None =0,
+    None = 0,
     Ace = 1,
     Two,
     Three,

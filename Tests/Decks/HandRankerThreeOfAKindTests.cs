@@ -3,10 +3,10 @@ using Poker.GtoBuilder;
 
 namespace Tests.Decks;
 
-public class HandRankerTwoPairTests
+public class HandRankerThreeOfAKindTests
 {
     [Fact]
-    public void WhenIsTwoPair()
+    public void WhenIsThreeOfAKind()
     {
         var hand = new HandRanker();
         var deck = new Deck();
@@ -17,7 +17,7 @@ public class HandRankerTwoPairTests
         hands.Add(card);
         deck.TryDeal((Rank.Four, Suit.Diamond), out card);
         hands.Add(card);
-        deck.TryDeal((Rank.Ten, Suit.Hart), out card);
+        deck.TryDeal((Rank.Queen, Suit.Hart), out card);
         hands.Add(card);
         deck.TryDeal((Rank.Four, Suit.Hart), out card);
         hands.Add(card);
@@ -28,11 +28,11 @@ public class HandRankerTwoPairTests
         deck.TryDeal((Rank.Queen, Suit.Club), out card);
         hands.Add(card);
 
-        Assert.True(hand.IsTwoPair(hands));
+        Assert.True(hand.IsThreeOfAKind(hands));
     }
 
     [Fact]
-    public void WhenIsNotTwoPair()
+    public void WhenIsNotThreeOfAKind()
     {
         var hand = new HandRanker();
         var deck = new Deck();
@@ -43,17 +43,17 @@ public class HandRankerTwoPairTests
         hands.Add(card);
         deck.TryDeal((Rank.Four, Suit.Diamond), out card);
         hands.Add(card);
-        deck.TryDeal((Rank.Ten, Suit.Hart), out card);
+        deck.TryDeal((Rank.Queen, Suit.Hart), out card);
         hands.Add(card);
         deck.TryDeal((Rank.Four, Suit.Hart), out card);
         hands.Add(card);
         deck.TryDeal((Rank.King, Suit.Spade), out card);
         hands.Add(card);
-        deck.TryDeal((Rank.Nine, Suit.Diamond), out card);
+        deck.TryDeal((Rank.King, Suit.Diamond), out card);
         hands.Add(card);
         deck.TryDeal((Rank.Queen, Suit.Club), out card);
         hands.Add(card);
 
-        Assert.False(hand.IsTwoPair(hands));
+        Assert.False(hand.IsThreeOfAKind(hands));
     }
 }

@@ -1,4 +1,4 @@
-﻿using Poker.GameReader.Hands;
+﻿using Poker.Common.Hands;
 using Poker.GameReader.Reporters;
 
 namespace Tests.Hands;
@@ -26,7 +26,7 @@ public class FlushTest
             ]
         };
 
-        double chance = Flush.CalculateChance(gameData);
+        double chance = Flush.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.04, chance);
     }
@@ -52,7 +52,7 @@ public class FlushTest
             ]
         };
 
-        double chance = Flush.CalculateChance(gameData);
+        double chance = Flush.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.19, chance);
     }
@@ -78,7 +78,7 @@ public class FlushTest
             ]
         };
 
-        double chance = Flush.CalculateChance(gameData);
+        double chance = Flush.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0.35, chance);
     }
@@ -104,7 +104,7 @@ public class FlushTest
             ]
         };
 
-        double chance = Flush.CalculateChance(gameData);
+        double chance = Flush.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(1, chance);
     }
@@ -130,7 +130,7 @@ public class FlushTest
             ]
         };
 
-        double chance = Flush.CalculateChance(gameData);
+        double chance = Flush.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(1, chance);
     }
@@ -156,7 +156,7 @@ public class FlushTest
             ]
         };
 
-        double chance = Flush.CalculateChance(gameData);
+        double chance = Flush.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0, chance);
     }
@@ -182,7 +182,7 @@ public class FlushTest
             ]
         };
 
-        double chance = Flush.CalculateChance(gameData);
+        double chance = Flush.CalculateChance(gameData.HandCards.Concat(gameData.CommunityCards));
 
         Assert.Equal(0, chance);
     }

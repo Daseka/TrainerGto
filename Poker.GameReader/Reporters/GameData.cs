@@ -3,6 +3,7 @@
 public readonly struct GameData
 {
     public double[] Bets { get; init; }
+    public bool[] VillainsPlaying { get; init; }
     public double BigBlind { get; init; }
     public double CallAmount { get; init; }
 

@@ -1,162 +1,141 @@
 ﻿using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
 
-namespace Tests.Strategies
+namespace Tests.Strategies;
+public class BigBlindTests
 {
-    public class BigBlindTests
+    [Fact]
+    public void WhenHasAceTenOffsuitBeenRaised()
     {
-        [Fact]
-        public void bla()
+        var gameData = new GameData
         {
-            double callChance = 1;
-            double winChance = .16;
-            double pot = 775;
-            double loseChance = .84;
-            double expectedEV = 0;
+            HandCards =
+            [
+                (CardRank.Ace,CardSuit.Diamond),
+                (CardRank.Ten,CardSuit.Club)
+            ],
+            Position = Position.BigBlind,
+            Bets = [1, 2, 3, 0, 0]
+        };
 
-            var x = ((expectedEV / callChance) - (winChance * pot)) / (winChance - loseChance);
+        var bigBlind = new BigBlind();
+        var result = bigBlind.Solve(gameData);
 
-
-            double myBet = 450;
-
-            Assert.Equal(myBet, Math.Round(x, 2));
-        }
-
-
-        [Fact]
-        public void WhenHasKingsHasBeenRaised()
+        var expected = new StrategySolution
         {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.King,CardSuit.Hart),
-                    (CardRank.King,CardSuit.Club)
-                ],
-                Position = Position.BigBlind,
-                Bets = [1, 2, 3, 0, 0]
-            };
+            Fold = 0,
+            Raise = 0.10,
+            Call = 0.90,
+        };
 
-            var bigBlind = new BigBlind();
-            var result = bigBlind.Solve(gameData);
+        Assert.Equal(expected, result);
+    }
 
-            var expected = new StrategySolution
-            {
-                Fold = 0,
-                Raise = 1,
-                Call = 0,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasFoursBeenRaised()
+    [Fact]
+    public void WhenHasFoursBeenRaised()
+    {
+        var gameData = new GameData
         {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.Four,CardSuit.Hart),
-                    (CardRank.Four,CardSuit.Club)
-                ],
-                Position = Position.BigBlind,
-                Bets = [1, 2, 3, 0, 0]
+            HandCards =
+            [
+                (CardRank.Four,CardSuit.Hart),
+                (CardRank.Four,CardSuit.Club)
+            ],
+            Position = Position.BigBlind,
+            Bets = [1, 2, 3, 0, 0]
+        };
 
-            };
+        var bigBlind = new BigBlind();
+        var result = bigBlind.Solve(gameData);
 
-            var bigBlind = new BigBlind();
-            var result = bigBlind.Solve(gameData);
-
-            var expected = new StrategySolution
-            {
-                Fold = 0,
-                Raise = 0,
-                Call = 1,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasSevenFourSuitedBeenRaised()
+        var expected = new StrategySolution
         {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.Seven,CardSuit.Club),
-                    (CardRank.Four,CardSuit.Club)
-                ],
-                Position = Position.BigBlind,
-                Bets = [1, 2, 3, 0, 0]
-            };
+            Fold = 0,
+            Raise = 0,
+            Call = 1,
+        };
 
-            var bigBlind = new BigBlind();
-            var result = bigBlind.Solve(gameData);
+        Assert.Equal(expected, result);
+    }
 
-            var expected = new StrategySolution
-            {
-                Fold = 0,
-                Raise = 0,
-                Call = 1,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasAceTenOffsuitBeenRaised()
+    [Fact]
+    public void WhenHasKingJackOffsuitBeenRaised()
+    {
+        var gameData = new GameData
         {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.Ace,CardSuit.Diamond),
-                    (CardRank.Ten,CardSuit.Club)
-                ],
-                Position = Position.BigBlind,
-                Bets = [1, 2, 3, 0, 0]
-            };
+            HandCards =
+            [
+                (CardRank.King,CardSuit.Diamond),
+                (CardRank.Jack,CardSuit.Club)
+            ],
+            Position = Position.BigBlind,
+            Bets = [1, 2, 3, 0, 0]
+        };
 
-            var bigBlind = new BigBlind();
-            var result = bigBlind.Solve(gameData);
+        var bigBlind = new BigBlind();
+        var result = bigBlind.Solve(gameData);
 
-            var expected = new StrategySolution
-            {
-                Fold = 0,
-                Raise = 0.10,
-                Call = 0.90,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasKingJackOffsuitBeenRaised()
+        var expected = new StrategySolution
         {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.King,CardSuit.Diamond),
-                    (CardRank.Jack,CardSuit.Club)
-                ],
-                Position = Position.BigBlind,
-                Bets = [1, 2, 3, 0, 0]
-            };
+            Fold = 0,
+            Raise = 0.09,
+            Call = 0.91,
+        };
 
-            var bigBlind = new BigBlind();
-            var result = bigBlind.Solve(gameData);
+        Assert.Equal(expected, result);
+    }
 
-            var expected = new StrategySolution
-            {
-                Fold = 0,
-                Raise = 0.09,
-                Call = 0.91,
-            };
+    [Fact]
+    public void WhenHasKingsHasBeenRaised()
+    {
+        var gameData = new GameData
+        {
+            HandCards =
+            [
+                (CardRank.King,CardSuit.Hart),
+                (CardRank.King,CardSuit.Club)
+            ],
+            Position = Position.BigBlind,
+            Bets = [1, 2, 3, 0, 0]
+        };
 
-            Assert.Equal(expected, result);
-        }
+        var bigBlind = new BigBlind();
+        var result = bigBlind.Solve(gameData);
+
+        var expected = new StrategySolution
+        {
+            Fold = 0,
+            Raise = 1,
+            Call = 0,
+        };
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void WhenHasSevenFourSuitedBeenRaised()
+    {
+        var gameData = new GameData
+        {
+            HandCards =
+            [
+                (CardRank.Seven,CardSuit.Club),
+                (CardRank.Four,CardSuit.Club)
+            ],
+            Position = Position.BigBlind,
+            Bets = [1, 2, 3, 0, 0]
+        };
+
+        var bigBlind = new BigBlind();
+        var result = bigBlind.Solve(gameData);
+
+        var expected = new StrategySolution
+        {
+            Fold = 0,
+            Raise = 0,
+            Call = 1,
+        };
+
+        Assert.Equal(expected, result);
     }
 }

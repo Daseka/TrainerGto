@@ -3,57 +3,57 @@ using Poker.GtoBuilder;
 
 namespace Tests.Decks;
 
-public class HandRankerTwoPairTests
+public class HandRankerFlushTests
 {
     [Fact]
-    public void WhenIsTwoPair()
+    public void WhenIsFlush()
     {
         var hand = new HandRanker();
         var deck = new Deck();
 
         var hands = new List<(Rank, Suit)>();
 
-        deck.TryDeal((Rank.Jack, Suit.Club), out var card);
+        deck.TryDeal((Rank.Jack, Suit.Diamond), out var card);
         hands.Add(card);
         deck.TryDeal((Rank.Four, Suit.Diamond), out card);
-        hands.Add(card);
-        deck.TryDeal((Rank.Ten, Suit.Hart), out card);
-        hands.Add(card);
-        deck.TryDeal((Rank.Four, Suit.Hart), out card);
-        hands.Add(card);
-        deck.TryDeal((Rank.King, Suit.Spade), out card);
         hands.Add(card);
         deck.TryDeal((Rank.Queen, Suit.Diamond), out card);
         hands.Add(card);
+        deck.TryDeal((Rank.Ace, Suit.Diamond), out card);
+        hands.Add(card);
+        deck.TryDeal((Rank.Two, Suit.Spade), out card);
+        hands.Add(card);
+        deck.TryDeal((Rank.Ten, Suit.Diamond), out card);
+        hands.Add(card);
         deck.TryDeal((Rank.Queen, Suit.Club), out card);
         hands.Add(card);
 
-        Assert.True(hand.IsTwoPair(hands));
+        Assert.True(hand.IsFlush(hands));
     }
 
     [Fact]
-    public void WhenIsNotTwoPair()
+    public void WhenIsNotFlush()
     {
         var hand = new HandRanker();
         var deck = new Deck();
 
         var hands = new List<(Rank, Suit)>();
 
-        deck.TryDeal((Rank.Jack, Suit.Club), out var card);
+        deck.TryDeal((Rank.Jack, Suit.Diamond), out var card);
         hands.Add(card);
         deck.TryDeal((Rank.Four, Suit.Diamond), out card);
         hands.Add(card);
-        deck.TryDeal((Rank.Ten, Suit.Hart), out card);
+        deck.TryDeal((Rank.Queen, Suit.Diamond), out card);
         hands.Add(card);
         deck.TryDeal((Rank.Four, Suit.Hart), out card);
         hands.Add(card);
-        deck.TryDeal((Rank.King, Suit.Spade), out card);
+        deck.TryDeal((Rank.Two, Suit.Spade), out card);
         hands.Add(card);
-        deck.TryDeal((Rank.Nine, Suit.Diamond), out card);
+        deck.TryDeal((Rank.Ten, Suit.Diamond), out card);
         hands.Add(card);
         deck.TryDeal((Rank.Queen, Suit.Club), out card);
         hands.Add(card);
 
-        Assert.False(hand.IsTwoPair(hands));
+        Assert.False(hand.IsFlush(hands));
     }
 }

@@ -1,11 +1,10 @@
 ﻿using GtoTrainer.Trainers;
+using Poker.GameReader.Reporters;
 
 internal class Program
 {
-    
-    public static void Main(string[] args)
+    public async static Task Main(string[] args)
     {
-        ConsoleTrainer.RunConsoleTrainer();
+        await ConsoleTrainer.RunConsoleTrainer();
     }
-
 }
