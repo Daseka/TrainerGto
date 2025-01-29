@@ -10,6 +10,10 @@ public struct StrategyData
     public double Raise { get; init; }
     public string SugestedAction { get; set; }
 
+    public double MaxBet { get; set; }
+
+    public double MinBet { get; set; }
+
     public StrategyData()
     {
         SugestedAction = string.Empty;

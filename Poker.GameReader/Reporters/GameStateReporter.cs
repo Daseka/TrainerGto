@@ -43,18 +43,18 @@ public class GameStateReporter
     private const int HighJackLeftEdge = 320;
     private const int HighJackTopEdge = 350;
 
-    private const int PlayerName1LeftEdge = 244;
-    private const int PlayerName1TopEdge = 630;
-    private const int PlayerName2LeftEdge = 284;
-    private const int PlayerName2TopEdge = 210;
-    private const int PlayerName3LeftEdge = 814;
-    private const int PlayerName3TopEdge = 105;
-    private const int PlayerName4LeftEdge = 1344;
+    private const int CardBorder1LeftEdge = 234;
+    private const int CardBorderTopEdge = 635;
+    private const int CardBorder2LeftEdge = 284;
+    private const int CardBorder2TopEdge = 210;
+    private const int CardBorder3LeftEdge = 814;
+    private const int CardBorder3TopEdge = 105;
+    private const int CardBorder4LeftEdge = 1344;
     private const int PlayerName4TopEdge = 210;
-    private const int PlayerName5LeftEdge = 1384;
-    private const int PlayerName5TopEdge = 630;
-    private const int PlayerNameSampleSize = 10;
-    private const string PlayerNameWhiteColor = "ffffffff";
+    private const int CardBorder5LeftEdge = 1384;
+    private const int CardBorder5TopEdge = 630;
+    private const int CardBorderSampleSize = 10;
+    private const string CardBorderWhiteColor = "ffffffff";
 
     private const int PositionHeight = 26;
     private const int PositionWidth = 130;
@@ -107,34 +107,49 @@ public class GameStateReporter
         return false;
     }
 
-    public GameData GetGameState()
+    public async Task<GameData> GetGameState()
     {
+        (int cardRank, int cardSuit)[] communityCards = [];
+        (int cardRank, int cardSuit)[] handCards = [];
+        double callAmount = 0;
+        double potTotal = 0;
+        Position position = Position.None;
+        var villansPlaying = new bool[5];
+        var bets = new double[6];
+
+        Task[] tasks =
+        [
+            Task.Run(async () => communityCards = await GetMiddleCards(_rect, _screenGrabber, _middleCardHashes)),
+            Task.Run(async () => handCards = await GetHandCards(_rect, _screenGrabber, _leftHandCardHashes, _rightHandCardHashes)),
+            Task.Run(() => callAmount = GetCallAmount(_rect, _screenGrabber)),
+            Task.Run(() => potTotal = GetPotTotal(_rect, _screenGrabber)),
+            Task.Run(() => position = GetPosition(_rect, _screenGrabber)),
+            Task.Run(() => villansPlaying[0] = GetIsVillainPlaying(CardBorder1LeftEdge,CardBorderTopEdge, _rect, _screenGrabber)),
+            Task.Run(() => villansPlaying[1] = GetIsVillainPlaying(CardBorder2LeftEdge,CardBorder2TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => villansPlaying[2] = GetIsVillainPlaying(CardBorder3LeftEdge,CardBorder3TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => villansPlaying[3] = GetIsVillainPlaying(CardBorder4LeftEdge,PlayerName4TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => villansPlaying[4] = GetIsVillainPlaying(CardBorder5LeftEdge,CardBorder5TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => bets[0] = GetBetSeat(BetSeat0LeftEdge,BetSeat0TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => bets[1] = GetBetSeat(BetSeat1LeftEdge,BetSeat1TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => bets[2] = GetBetSeat(BetSeat2LeftEdge,BetSeat2TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => bets[3] = GetBetSeat(BetSeat3LeftEdge,BetSeat3TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => bets[4] = GetBetSeat(BetSeat4LeftEdge,BetSeat4TopEdge, _rect, _screenGrabber)),
+            Task.Run(() => bets[5] = GetBetSeat(BetSeat5LeftEdge,BetSeat5TopEdge, _rect, _screenGrabber)),
+        ];
+
+        await Task.WhenAll(tasks);
+
         return new GameData
         {
             SmallBlind = _smallBlind,
             BigBlind = _bigBlind,
-            CommunityCards = GetMiddleCards(_rect, _screenGrabber),
-            HandCards = GetHandCards(_rect, _screenGrabber),
-            CallAmount = GetCallAmount(_rect, _screenGrabber),
-            PotTotal = GetPotTotal(_rect, _screenGrabber),
-            Position = GetPosition(_rect, _screenGrabber),
-            VillainsPlaying =
-            [
-                GetPlayingSeat(PlayerName1LeftEdge,PlayerName1TopEdge, _rect, _screenGrabber),
-                GetPlayingSeat(PlayerName2LeftEdge,PlayerName2TopEdge, _rect, _screenGrabber),
-                GetPlayingSeat(PlayerName3LeftEdge,PlayerName3TopEdge, _rect, _screenGrabber),
-                GetPlayingSeat(PlayerName4LeftEdge,PlayerName4TopEdge, _rect, _screenGrabber),
-                GetPlayingSeat(PlayerName5LeftEdge,PlayerName5TopEdge, _rect, _screenGrabber),
-            ],
-            Bets =
-            [
-                GetBetSeat(BetSeat0LeftEdge,BetSeat0TopEdge, _rect, _screenGrabber),
-                GetBetSeat(BetSeat1LeftEdge,BetSeat1TopEdge, _rect, _screenGrabber),
-                GetBetSeat(BetSeat2LeftEdge,BetSeat2TopEdge, _rect, _screenGrabber),
-                GetBetSeat(BetSeat3LeftEdge,BetSeat3TopEdge, _rect, _screenGrabber),
-                GetBetSeat(BetSeat4LeftEdge,BetSeat4TopEdge, _rect, _screenGrabber),
-                GetBetSeat(BetSeat5LeftEdge,BetSeat5TopEdge, _rect, _screenGrabber),
-            ]
+            CommunityCards = communityCards,
+            HandCards = handCards,
+            CallAmount = callAmount,
+            PotTotal = potTotal,
+            Position = position,
+            VillainsPlaying = villansPlaying,
+            Bets = bets
         };
     }
 
@@ -235,15 +250,63 @@ public class GameStateReporter
         return double.TryParse(callAmount.ToString(), out double result) ? result : 0;
     }
 
-    private static bool GetPlayingSeat(int left, int top, Rect rect, ScreenGrabber screenGrabber)
+    private static async Task<(int cardRank, int cardSuit)[]> GetHandCards(
+        Rect rect,
+        ScreenGrabber screenGrabber,
+        Dictionary<int, ulong> leftHandCardHashes,
+        Dictionary<int, ulong> rightHandCardHashes)
+    {
+        Bitmap[] bitmaps = TakeScreenShotHandCards(rect, screenGrabber);
+        var tasks = new Task<(int, int)>[2];
+
+        try
+        {
+            tasks[0] = RunHashComparison(bitmaps[0], leftHandCardHashes);
+            tasks[1] = RunHashComparison(bitmaps[1], rightHandCardHashes);
+
+            return await Task.WhenAll(tasks);
+        }
+        finally
+        {
+            foreach (Bitmap bitmap in bitmaps)
+            {
+                bitmap.Dispose();
+            }
+        }
+    }
+
+    private static async Task<(int cardRank, int cardSuit)[]> GetMiddleCards(
+        Rect rect, ScreenGrabber screenGrabber,
+        Dictionary<int, ulong> middleCardHashes)
+    {
+        Bitmap[] bitmaps = await TakeScreenShotMiddleCards(rect, screenGrabber);
+        (int cardRank, int cardSuit)[] cards = new (int, int)[bitmaps.Length];
+        var tasks = new Task<(int, int)>[bitmaps.Length];
+
+        for (int i = 0; i < cards.Length; i++)
+        {
+            tasks[i] = RunHashComparison(bitmaps[i], middleCardHashes);
+        }
+
+        cards = await Task.WhenAll(tasks);
+
+        foreach (Bitmap bitmap in bitmaps)
+        {
+            bitmap.Dispose();
+        }
+
+        return cards;
+    }
+
+    private static bool GetIsVillainPlaying(int left, int top, Rect rect, ScreenGrabber screenGrabber)
     {
         using Bitmap bitmap = screenGrabber
-            .GrabScreenBlock(left + rect.Left, top + rect.Top, PlayerNameSampleSize, PlayerNameSampleSize);
+            .GrabScreenBlock(left + rect.Left, top + rect.Top, CardBorderSampleSize, CardBorderSampleSize);
 
-        for (int i = 0; i < PlayerNameSampleSize; i++)
+        for (int i = 0; i < CardBorderSampleSize; i++)
         {
             var color = bitmap.GetPixel(i, 0);
-            if (color.Name == PlayerNameWhiteColor)
+            if (color.Name == CardBorderWhiteColor)
             {
                 return true;
             }
@@ -338,7 +401,7 @@ public class GameStateReporter
         using TesseractEngine engine2 = new(@"tessdata", "eng", EngineMode.Default);
     }
 
-    private static (int cardRank, int cardSuit) RunHashComparison(Bitmap bitmap, Dictionary<int, ulong> cardHashes)
+    private static Task<(int cardRank, int cardSuit)> RunHashComparison(Bitmap bitmap, Dictionary<int, ulong> cardHashes)
     {
         Color pixelColor = bitmap.GetPixel(bitmap.Width - 1, bitmap.Height - 1);
 
@@ -370,7 +433,7 @@ public class GameStateReporter
             }
         }
 
-        return highestCertainty < 80 ? (CardRank.None, CardSuit.None) : (correctCard, suit);
+        return Task.FromResult(highestCertainty < 80 ? (CardRank.None, CardSuit.None) : (correctCard, suit));
     }
 
     private static Bitmap[] TakeScreenShotHandCards(Rect rect, ScreenGrabber screenGrabber)
@@ -386,10 +449,10 @@ public class GameStateReporter
         return [left, right];
     }
 
-    private static Bitmap[] TakeScreenShotMiddleCards(Rect rect, ScreenGrabber screenGrabber)
+    private static async Task<Bitmap[]> TakeScreenShotMiddleCards(Rect rect, ScreenGrabber screenGrabber)
     {
         const int MiddleCardCount = 5;
-        var middleCards = new Bitmap[MiddleCardCount];
+        Task<Bitmap>[] tasks = new Task<Bitmap>[MiddleCardCount];
 
         int y = CardTopEdge + rect.Top;
 
@@ -398,10 +461,10 @@ public class GameStateReporter
             int x = CardLeftEdge + rect.Left + SpaceBetweenCards * i + CardWidth * i;
             Bitmap screenBlock = screenGrabber.GrabScreenBlock(x, y, RankAreaWidth, RankAreaHeight);
 
-            middleCards[i] = screenBlock;
+            tasks[i] = Task<Bitmap>.Run(() => screenGrabber.GrabScreenBlock(x, y, RankAreaWidth, RankAreaHeight));
         }
 
-        return middleCards;
+        return await Task.WhenAll(tasks);
     }
 
     private static bool TryFindPosition(int x, int y, ScreenGrabber screenGrabber)
@@ -409,40 +472,5 @@ public class GameStateReporter
         using Bitmap bitmap = screenGrabber.GrabScreenBlock(x, y, 4, 4);
 
         return bitmap.GetPixel(1, 1).R > 100;
-    }
-
-    private (int cardRank, int cardSuit)[] GetHandCards(Rect rect, ScreenGrabber screenGrabber)
-    {
-        Bitmap[] bitmaps = TakeScreenShotHandCards(rect, screenGrabber);
-
-        try
-        {
-            return [RunHashComparison(bitmaps[0], _leftHandCardHashes), RunHashComparison(bitmaps[1], _rightHandCardHashes)];
-        }
-        finally
-        {
-            foreach (Bitmap bitmap in bitmaps)
-            {
-                bitmap.Dispose();
-            }
-        }
-    }
-
-    private (int cardRank, int cardSuit)[] GetMiddleCards(Rect rect, ScreenGrabber screenGrabber)
-    {
-        Bitmap[] bitmaps = TakeScreenShotMiddleCards(rect, screenGrabber);
-        (int cardRank, int cardSuit)[] cards = new (int, int)[bitmaps.Length];
-
-        for (int i = 0; i < cards.Length; i++)
-        {
-            cards[i] = RunHashComparison(bitmaps[i], _middleCardHashes);
-        }
-
-        foreach (Bitmap bitmap in bitmaps)
-        {
-            bitmap.Dispose();
-        }
-
-        return cards;
     }
 }

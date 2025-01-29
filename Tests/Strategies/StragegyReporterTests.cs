@@ -7,7 +7,7 @@ namespace Tests.Strategies
     public class StragegyReporterTests
     {
         [Fact]
-        public void bla()
+        public async Task bla()
         {
             var reporter = new StrategyReporter();
 
@@ -27,7 +27,7 @@ namespace Tests.Strategies
 
             var stopWatch = Stopwatch.StartNew();
 
-            var strategy = reporter.GetStrategy(gameData);
+            var strategy = await reporter.GetStrategy(gameData);
 
             Debug.WriteLine($"{strategy.SugestedAction}");
 

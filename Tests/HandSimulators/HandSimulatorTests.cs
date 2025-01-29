@@ -4,10 +4,11 @@ using System.Diagnostics;
 
 namespace Tests.HandSimulators;
 
+
 public class HandSimulatorTests
 {
     [Fact]
-    public void WhenHoldingKingsOnDryBoardVsTwo()
+    public async Task WhenHoldingKingsOnDryBoardVsTwo()
     {
         var sim = new HandSimulator(6879);
 
@@ -25,40 +26,40 @@ public class HandSimulatorTests
         };
 
         var stop = Stopwatch.StartNew();
-        var (win,draw,loss) =  sim.SimulateWinChance(heroHand, [100, 100], [.. community]);
+        var (win,draw,loss) =  await sim.SimulateWinChance(heroHand, [100, 100], [.. community]);
         stop.Stop();
         var time = stop.Elapsed.TotalSeconds;
 
-        Assert.Equal(71.06, win);
-        Assert.Equal(0.38, draw);
-        Assert.Equal(28.56, loss);
+        Assert.Equal(73.7, win);
+        Assert.Equal(0.17, draw);
+        Assert.Equal(26.08, loss);
     }
 
     [Fact]
-    public void WhenHoldingKingsOnWetBoardVsTwo()
+    public async Task WhenHoldingKingsOnWetBoardVsTwo()
     {
         var sim = new HandSimulator(6879);
 
         var heroHand = new (Rank, Suit)[]
         {
-            (Rank.King, Suit.Hart),
-            (Rank.King, Suit.Diamond),
+            (Rank.Six, Suit.Club),
+            (Rank.Six, Suit.Diamond),
         };
 
         var community = new List<(Rank, Suit)>
         {
-            (Rank.Six, Suit.Club),
-            (Rank.Eight, Suit.Diamond),
-            (Rank.Seven, Suit.Club),
+            (Rank.Two, Suit.Hart),
+            (Rank.Nine, Suit.Diamond),
+            (Rank.Ace, Suit.Spade),
         };
 
         var stop = Stopwatch.StartNew();
-        var (win, draw, loss) = sim.SimulateWinChance(heroHand, [100, 100], [.. community]);
+        var (win, draw, loss) = await sim.SimulateWinChance(heroHand, [100, 100], [.. community]);
         stop.Stop();
         var time = stop.Elapsed.TotalSeconds;
 
-        Assert.Equal(36.33, win);
-        Assert.Equal(3.17, draw);
-        Assert.Equal(60.5, loss);
+        Assert.Equal(36.93, win);
+        Assert.Equal(0.13, draw);
+        Assert.Equal(62.88, loss);
     }
 }
