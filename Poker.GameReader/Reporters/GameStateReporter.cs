@@ -59,9 +59,9 @@ public class GameStateReporter
     private const int PositionHeight = 26;
     private const int PositionWidth = 130;
     private const int PotTotalHeight = 34;
-    private const int PotTotalLeftEdge = 604;
+    private const int PotTotalLeftEdge = 634;
     private const int PotTotalTopEdge = 368;
-    private const int PotTotalWidth = 260;
+    private const int PotTotalWidth = 200;
     private const int RankAreaHeight = 39;
     private const int RankAreaWidth = 39;
     private const int SmallBlindLeftEdge = 1130;

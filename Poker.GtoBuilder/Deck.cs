@@ -73,6 +73,20 @@ public class Deck
         return false;
     }
 
+    public bool CanDeal((Rank, Suit) cardToDeal)
+    {
+        for (int i = 0; i <= _startIndexOfCardsDealt; i++)
+        {
+            var currentCard = ((Rank)_cards[i][0], (Suit)_cards[i][1]);
+            if (currentCard == cardToDeal)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public bool TryDeal((Rank, Suit) cardToDeal, out (Rank, Suit) cardDealt)
     {
         for (int i = 0; i <= _startIndexOfCardsDealt; i++)

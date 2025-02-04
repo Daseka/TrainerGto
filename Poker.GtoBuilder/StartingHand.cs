@@ -11,7 +11,7 @@ public class StartingHand
     private const int MaxSuit = (int)Suit.Spade;
     private const int MinSuit = (int)Suit.None;
     private const string FilePath = "StartingHands.json";
-    private readonly JsonSerializerOptions _jsonOptions = new()
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         Converters = { new JsonStringEnumConverter() },
         IncludeFields = true,
@@ -28,7 +28,7 @@ public class StartingHand
         return list;
     }
 
-    public List<((Rank, Suit)[], double)>? ReadStartingHands()
+    public static List<((Rank, Suit)[], double)>? ReadStartingHands()
     {
         var json = File.ReadAllText(FilePath);
         if (string.IsNullOrEmpty(json))

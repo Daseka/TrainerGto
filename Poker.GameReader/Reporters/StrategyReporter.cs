@@ -10,6 +10,7 @@ public class StrategyReporter
     private const string NoStrategy = "No Strategy";
     private const double CrushEmFactor = 3;
     private const double PokeEmFactor = 1.5;
+    private const int DefaultPlayPercentage = 23;
     private int _lastPick;
     private StrategyData _lastStrategyData;
     private GameData _previousGameData;
@@ -51,7 +52,7 @@ public class StrategyReporter
             .Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
 
         var handCards = gameData.HandCards.Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
-        var villains = gameData.VillainsPlaying.Where(x => x).Select(x => 100);
+        var villains = gameData.VillainsPlaying.Where(x => x).Select(x => DefaultPlayPercentage);
         var communityCards = gameData.CommunityCards
             .Where(x => x.cardSuit != (int)Suit.None)
             .Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));

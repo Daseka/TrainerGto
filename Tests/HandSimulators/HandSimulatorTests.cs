@@ -26,7 +26,7 @@ public class HandSimulatorTests
         };
 
         var stop = Stopwatch.StartNew();
-        var (win,draw,loss) =  await sim.SimulateWinChance(heroHand, [100, 100], [.. community]);
+        var (win,draw,loss) =  await sim.SimulateWinChance(heroHand, [50, 50], [.. community]);
         stop.Stop();
         var time = stop.Elapsed.TotalSeconds;
 
