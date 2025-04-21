@@ -2,19 +2,77 @@
 
 namespace Poker.GtoBuilder;
 
-public class HandSimulator(int? seed = null)
+public class HandSimulator : IHandSimulator
 {
+    private const int BatchSize = 1000;
+    private const int HandSize = 2;
     private const int MaxCommunityCards = 5;
     private const int MaxSimulations = 100000;
     private const int Precission = 2;
-    private static readonly (Rank, Suit)[][]? _startingHandList = StartingHand
+    private readonly IDeckBuilder _deckBuilder;
+    private readonly IHandScorer _handScorer;
+    private readonly (Rank, Suit)[][] _startingHandList = StartingHand
         .ReadStartingHands()
-        ?.OrderByDescending(x => x.Item2)
+        .OrderByDescending(x => x.Item2)
         .Select(x => x.Item1)
         .ToArray();
-    private readonly int? _seed = seed;
+
+    public int? Seed { get; set; }
+
+    public HandSimulator(IDeckBuilder deckBuilder, IHandScorer handScorer)
+    {
+        _deckBuilder = deckBuilder;
+        _handScorer = handScorer;
+    }
 
     public async Task<(double win, double draw, double loss)> SimulateWinChance(
+        (Rank, Suit)[] heroCards,
+        int[] villainHandRangePercentages,
+        (Rank, Suit)[] communityCards)
+    {
+        int count = 0;
+        int index = 0;
+        int seed = Seed ?? 0;
+        TaskFactory taskFactory = new();
+        Task<(int win, int draw, int loss)>[] threads = new Task<(int win, int draw, int loss)>[MaxSimulations / BatchSize];
+
+        (Rank, Suit)[][][] villainHandRanges = new (Rank, Suit)[villainHandRangePercentages.Length][][];
+        for (int i = 0; i < villainHandRanges.Length; i++)
+        {
+            villainHandRanges[i] = [.. _startingHandList.Take(_startingHandList.Length * villainHandRangePercentages[i] / 100 + 1)];
+        }
+
+        while (count < MaxSimulations)
+        {
+            threads[index] = taskFactory.StartNew(()
+                => RunSimulation(_handScorer, heroCards, villainHandRanges, communityCards, ++seed, BatchSize));
+
+            count += BatchSize;
+            index++;
+        }
+
+        (int win, int draw, int loss)[] results = await Task.WhenAll(threads);
+
+        await Task.WhenAll(threads);
+
+        double wins = 0;
+        double draws = 0;
+        double loss = 0;
+
+        foreach ((int win, int draw, int loss) result in results)
+        {
+            wins += result.win;
+            draws += result.draw;
+            loss += result.loss;
+        }
+
+        return (
+            Math.Round(wins / MaxSimulations * 100, Precission),
+            Math.Round(draws / MaxSimulations * 100, Precission),
+            Math.Round(loss / MaxSimulations * 100, Precission));
+    }
+
+    public async Task<(double win, double draw, double loss)> SimulateWinChanceOld(
         (Rank, Suit)[] heroCards,
         int[] villainHandRanges,
         (Rank, Suit)[] communityCards)
@@ -23,20 +81,21 @@ public class HandSimulator(int? seed = null)
         double draws = 0;
         double loss = 0;
 
-        int batchSize = 1000;
-        var threads = new Task[MaxSimulations / batchSize];
+        Task[] threads = new Task[MaxSimulations / BatchSize];
 
         int count = 0;
         int i = 0;
-        int seed = _seed ?? 0;
 
-        var taskFactory = new TaskFactory();
+        int seed = Seed ?? 0;
+
+        TaskFactory taskFactory = new();
         while (count < MaxSimulations)
         {
+            IDeck deck = _deckBuilder.Build(++seed);
             threads[i] = taskFactory.StartNew(()
-                => RunSimulation(heroCards, villainHandRanges, communityCards, ++seed, ref wins, ref draws, ref loss, batchSize));
+                => RunSimulationOld(_handScorer, heroCards, villainHandRanges, communityCards, deck, ref wins, ref draws, ref loss, BatchSize));
 
-            count += batchSize;
+            count += BatchSize;
             i++;
         }
 
@@ -48,63 +107,132 @@ public class HandSimulator(int? seed = null)
             Math.Round(loss / MaxSimulations * 100, Precission));
     }
 
-    private (Rank, Suit)[] GetVillainCards(int playPercentage, Deck deck, int seed)
+    private static (Rank, Suit)[] GetVillainCards(IDeck deck, int seed, (Rank, Suit)[][] startingHandList)
     {
-        if (_startingHandList is null)
+        if (startingHandList is null)
         {
             throw new ArgumentException("Starting Hand List can't be Null");
         }
 
-        var random = new Random(seed);
-        var topPercentage = (_startingHandList.Length * playPercentage / 100) + 1;
+        Random random = new(seed);
+        int topPercentage = startingHandList.Length;
 
-        var hand = new (Rank, Suit)[2];
-        bool succesfullCard1 = false;
-        bool succesfullCard2 = false;
-
-        var errors = new List<string>();
-
+        (Rank, Suit)[] hand = new (Rank, Suit)[2];
+        bool succesfullCard1;
+        bool succesfullCard2;
+        
         while (topPercentage > 0)
         {
-            var index = random.Next(topPercentage);
-            succesfullCard1 = deck.CanDeal(_startingHandList[index][0]);
-            succesfullCard2 = deck.CanDeal(_startingHandList[index][1]);
+            int index = random.Next(topPercentage);
+            succesfullCard1 = deck.CanDeal(startingHandList[index][0]);
+            succesfullCard2 = deck.CanDeal(startingHandList[index][1]);
 
             if (succesfullCard1 && succesfullCard2)
             {
-                deck.TryDeal(_startingHandList[index][0], out hand[0]);
-                deck.TryDeal(_startingHandList[index][1], out hand[1]);
+                _ = deck.TryDeal(startingHandList[index][0], out hand[0]);
+                _ = deck.TryDeal(startingHandList[index][1], out hand[1]);
 
                 return hand;
             }
 
             if (!succesfullCard1)
             {
-                errors.Add($"{_startingHandList[index][0].Item1} {_startingHandList[index][0].Item2}");
-                (_startingHandList[index], _startingHandList[topPercentage]) = (_startingHandList[topPercentage], _startingHandList[index]);
+                (startingHandList[index], startingHandList[topPercentage - 1]) = (startingHandList[topPercentage - 1], startingHandList[index]);
                 --topPercentage;
-                continue;
             }
 
             if (!succesfullCard2)
             {
-                errors.Add($"{_startingHandList[index][1].Item1} {_startingHandList[index][1].Item2}");
-                (_startingHandList[index], _startingHandList[topPercentage]) = (_startingHandList[topPercentage], _startingHandList[index]);
+                (startingHandList[index], startingHandList[topPercentage - 1]) = (startingHandList[topPercentage - 1], startingHandList[index]);
                 --topPercentage;
             }
         }
-        
-        throw new ArgumentException("Tried 5 times and failed");
+
+        throw new ArgumentException("Could not get vilain hand");
     }
 
-    private Task RunSimulation(
+    private static Task RunSimulationOld(
+        IHandScorer handScorer,
         (Rank, Suit)[] heroCards,
-        int[] villainPlayPercentages,
+        int[] villainHandRanges,
         (Rank, Suit)[] communityCards,
-        int seed,
+        IDeck deck,
         ref double wins, ref double draws, ref double loss, int batchSize)
     {
-        var deck = new Deck(seed);
+        int i = 0;
+        while (i < batchSize)
+        {
+            deck.Reset();
+            deck.Shuffle();
+
+            (Rank, Suit)[] hand = new (Rank, Suit)[2];
+            _ = deck.TryDeal(heroCards[0], out hand[0]);
+            _ = deck.TryDeal(heroCards[1], out hand[1]);
+
+            (Rank, Suit)[] community = new (Rank, Suit)[communityCards.Length];
+            for (int j = 0; j < communityCards.Length; j++)
+            {
+                _ = deck.TryDeal(communityCards[j], out community[j]);
+            }
+
+            int villainCardCount = villainHandRanges.Length * HandSize;
+            int missingCommunityCardCount = MaxCommunityCards - communityCards.Length;
+
+            (Rank, Suit)[] peekedCards = deck.Peek(villainCardCount + missingCommunityCardCount);
+            (Rank, Suit)[] fullCommunityCards = [.. communityCards, .. peekedCards.Take(missingCommunityCardCount)];
+            long heroScore = handScorer.ScoreHand(hand, [.. fullCommunityCards]);
+
+            int villainCardIndex = missingCommunityCardCount;
+            int scoresIndex = 0;
+            long maxVillain = 0;
+
+            while (scoresIndex < villainHandRanges.Length)
+            {
+                long villainScore = handScorer
+                    .ScoreHand([peekedCards[villainCardIndex], peekedCards[++villainCardIndex]],[.. fullCommunityCards]);
+
+                if (villainScore > maxVillain)
+                {
+                    maxVillain = villainScore;
+                }
+
+                villainCardIndex++;
+                scoresIndex++;
+            }
+
+            //Determin if highest scoring villain beats hero
+            if (heroScore > maxVillain)
+            {
+                wins++;
+            }
+            else if (heroScore == maxVillain)
+            {
+                draws++;
+            }
+            else
+            {
+                loss++;
+            }
+
+            i++;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private (int wins, int draws, int loss) RunSimulation(
+        IHandScorer handScorer,
+        (Rank, Suit)[] heroCards,
+        (Rank, Suit)[][][] villainHandRanges,
+        (Rank, Suit)[] communityCards,
+        int seed,
+        int batchSize)
+    {
+        int wins = 0;
+        int draws = 0;
+        int loss = 0;
+
+        IDeck deck = _deckBuilder.Build(seed);
         int i = 0;
 
         while (i < batchSize)
@@ -112,31 +240,31 @@ public class HandSimulator(int? seed = null)
             deck.Reset();
             deck.Shuffle();
 
-            var hand = new (Rank, Suit)[2];
-            deck.TryDeal(heroCards[0], out hand[0]);
-            deck.TryDeal(heroCards[1], out hand[1]);
+            (Rank, Suit)[] hand = new (Rank, Suit)[2];
+            _ = deck.TryDeal(heroCards[0], out hand[0]);
+            _ = deck.TryDeal(heroCards[1], out hand[1]);
 
-            var community = new (Rank, Suit)[communityCards.Length];
+            (Rank, Suit)[] community = new (Rank, Suit)[communityCards.Length];
             for (int j = 0; j < communityCards.Length; j++)
             {
-                deck.TryDeal(communityCards[j], out community[j]);
+                _ = deck.TryDeal(communityCards[j], out community[j]);
             }
 
-            var villainHands = new List<(Rank, Suit)[]>(villainPlayPercentages.Length);
-            foreach (var percentage in villainPlayPercentages)
+            List<(Rank, Suit)[]> villainHands = new(villainHandRanges.Length);
+            foreach ((Rank, Suit)[][] villainHandRange in villainHandRanges)
             {
-                villainHands.Add(GetVillainCards(percentage, deck, seed));
+                villainHands.Add(GetVillainCards(deck, ++seed, villainHandRange));
             }
 
-            int missingCommunityCardCount = (MaxCommunityCards - communityCards.Length);
-            var peekedCards = deck.Peek(missingCommunityCardCount);
+            int missingCommunityCardCount = MaxCommunityCards - communityCards.Length;
+            (Rank, Suit)[] peekedCards = deck.Peek(missingCommunityCardCount);
             (Rank, Suit)[] fullCommunityCards = [.. communityCards, .. peekedCards];
-            long heroScore = HandScorer.ScoreHand(hand, [.. fullCommunityCards]);
+            long heroScore = handScorer.ScoreHand(hand, [.. fullCommunityCards]);
 
             long maxVillain = 0;
-            foreach (var villainHand in villainHands)
+            foreach ((Rank, Suit)[] villainHand in villainHands)
             {
-                var villainScore = HandScorer.ScoreHand(villainHand, fullCommunityCards);
+                long villainScore = handScorer.ScoreHand(villainHand, fullCommunityCards);
 
                 if (villainScore > maxVillain)
                 {
@@ -161,6 +289,6 @@ public class HandSimulator(int? seed = null)
             i++;
         }
 
-        return Task.CompletedTask;
+        return (wins, draws, loss);
     }
 }

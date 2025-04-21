@@ -2,14 +2,14 @@
 
 namespace Poker.GtoBuilder;
 
-public class Deck
+public class Deck : IDeck
 {
     private const int CardQuantity = 52;
     private const int HighestRank = 13;
     private readonly int[][] _cards;
     private readonly Random _randomizer;
     private int _startIndexOfCardsDealt;
-    
+
     public Deck(int? seed = null)
     {
         _randomizer = seed is null
@@ -51,28 +51,6 @@ public class Deck
         _randomizer.Shuffle(span);
     }
 
-    private bool TryDealRankOnly((Rank, Suit) cardToDeal, out (Rank, Suit) cardDealt)
-    {
-        for (int i = 0; i <= _startIndexOfCardsDealt; i++)
-        {
-            var currentCard = ((Rank)_cards[i][0], (Suit)_cards[i][1]);
-            //If rank is equal then deal that card
-            if (currentCard.Item1 == cardToDeal.Item1)
-            {
-                cardDealt = currentCard;
-
-                (_cards[_startIndexOfCardsDealt], _cards[i]) = (_cards[i], _cards[_startIndexOfCardsDealt]);
-                _startIndexOfCardsDealt--;
-
-                return true;
-            }
-        }
-
-        cardDealt = (Rank.None, Suit.None);
-
-        return false;
-    }
-
     public bool CanDeal((Rank, Suit) cardToDeal)
     {
         for (int i = 0; i <= _startIndexOfCardsDealt; i++)
@@ -95,7 +73,7 @@ public class Deck
             if (currentCard == cardToDeal)
             {
                 cardDealt = currentCard;
-                
+
                 (_cards[_startIndexOfCardsDealt], _cards[i]) = (_cards[i], _cards[_startIndexOfCardsDealt]);
                 _startIndexOfCardsDealt--;
 

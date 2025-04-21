@@ -7,7 +7,7 @@ using Rect = Poker.GameReader.ScreenUtilities.Rect;
 
 namespace Poker.GameReader.Reporters;
 
-public class GameStateReporter
+public class GameStateReporter : IGameStateReporter
 {
     private const int BetSeat0LeftEdge = 700;
     private const int BetSeat0TopEdge = 685;
@@ -73,19 +73,19 @@ public class GameStateReporter
     private readonly Dictionary<int, ulong> _leftHandCardHashes;
     private readonly Dictionary<int, ulong> _middleCardHashes;
     private readonly Dictionary<int, ulong> _rightHandCardHashes;
-    private readonly ScreenGrabber _screenGrabber;
+    private readonly IScreenGrabber _screenGrabber;
     private double _bigBlind;
     private Rect _rect;
     private double _smallBlind;
 
-    public GameStateReporter()
+    public GameStateReporter(IScreenGrabber screenGrabber)
     {
-        _screenGrabber = new ScreenGrabber();
         _middleCardHashes = LoadCardHashes(CardImages.MiddleImages);
         _leftHandCardHashes = LoadCardHashes(CardImages.LeftImages);
         _rightHandCardHashes = LoadCardHashes(CardImages.RightImages);
 
         PreLoadTesseractEngine();
+        _screenGrabber = screenGrabber;
     }
 
     public bool ConnectToGame(string[] gameName)
@@ -153,7 +153,7 @@ public class GameStateReporter
         };
     }
 
-    private static double GetBetSeat(int left, int top, Rect rect, ScreenGrabber screenGrabber)
+    private static double GetBetSeat(int left, int top, Rect rect, IScreenGrabber screenGrabber)
     {
         using TesseractEngine engine = new(@"tessdata", "eng", EngineMode.Default);
         using Bitmap potBitmap = screenGrabber
@@ -217,7 +217,7 @@ public class GameStateReporter
         return (small, big);
     }
 
-    private static double GetCallAmount(Rect rect, ScreenGrabber screenGrabber)
+    private static double GetCallAmount(Rect rect, IScreenGrabber screenGrabber)
     {
         using Bitmap bitmap = screenGrabber
             .GrabScreenBlock(CallAmountLeftEdge + rect.Left, CallAmountTopEdge + rect.Top, CallAmountWidth, CallAmountHeight);
@@ -252,7 +252,7 @@ public class GameStateReporter
 
     private static async Task<(int cardRank, int cardSuit)[]> GetHandCards(
         Rect rect,
-        ScreenGrabber screenGrabber,
+        IScreenGrabber screenGrabber,
         Dictionary<int, ulong> leftHandCardHashes,
         Dictionary<int, ulong> rightHandCardHashes)
     {
@@ -276,7 +276,7 @@ public class GameStateReporter
     }
 
     private static async Task<(int cardRank, int cardSuit)[]> GetMiddleCards(
-        Rect rect, ScreenGrabber screenGrabber,
+        Rect rect, IScreenGrabber screenGrabber,
         Dictionary<int, ulong> middleCardHashes)
     {
         Bitmap[] bitmaps = await TakeScreenShotMiddleCards(rect, screenGrabber);
@@ -298,7 +298,7 @@ public class GameStateReporter
         return cards;
     }
 
-    private static bool GetIsVillainPlaying(int left, int top, Rect rect, ScreenGrabber screenGrabber)
+    private static bool GetIsVillainPlaying(int left, int top, Rect rect, IScreenGrabber screenGrabber)
     {
         using Bitmap bitmap = screenGrabber
             .GrabScreenBlock(left + rect.Left, top + rect.Top, CardBorderSampleSize, CardBorderSampleSize);
@@ -315,7 +315,7 @@ public class GameStateReporter
         return false;
     }
 
-    private static Position GetPosition(Rect rect, ScreenGrabber screenGrabber)
+    private static Position GetPosition(Rect rect, IScreenGrabber screenGrabber)
     {
         int y = ButtonTopEdge + rect.Top;
         int x = ButtonLeftEdge + rect.Left;
@@ -360,7 +360,7 @@ public class GameStateReporter
             : Position.None;
     }
 
-    private static double GetPotTotal(Rect rect, ScreenGrabber screenGrabber)
+    private static double GetPotTotal(Rect rect, IScreenGrabber screenGrabber)
     {
         using TesseractEngine engine = new(@"tessdata", "eng", EngineMode.Default);
         using Bitmap potBitmap = screenGrabber
@@ -436,7 +436,7 @@ public class GameStateReporter
         return Task.FromResult(highestCertainty < 80 ? (CardRank.None, CardSuit.None) : (correctCard, suit));
     }
 
-    private static Bitmap[] TakeScreenShotHandCards(Rect rect, ScreenGrabber screenGrabber)
+    private static Bitmap[] TakeScreenShotHandCards(Rect rect, IScreenGrabber screenGrabber)
     {
         int y1 = CardLeftHandTopEdge + rect.Top;
         int x1 = CardLeftHandLeftEdge + rect.Left;
@@ -449,7 +449,7 @@ public class GameStateReporter
         return [left, right];
     }
 
-    private static async Task<Bitmap[]> TakeScreenShotMiddleCards(Rect rect, ScreenGrabber screenGrabber)
+    private static async Task<Bitmap[]> TakeScreenShotMiddleCards(Rect rect, IScreenGrabber screenGrabber)
     {
         const int MiddleCardCount = 5;
         Task<Bitmap>[] tasks = new Task<Bitmap>[MiddleCardCount];
@@ -467,7 +467,7 @@ public class GameStateReporter
         return await Task.WhenAll(tasks);
     }
 
-    private static bool TryFindPosition(int x, int y, ScreenGrabber screenGrabber)
+    private static bool TryFindPosition(int x, int y, IScreenGrabber screenGrabber)
     {
         using Bitmap bitmap = screenGrabber.GrabScreenBlock(x, y, 4, 4);
 

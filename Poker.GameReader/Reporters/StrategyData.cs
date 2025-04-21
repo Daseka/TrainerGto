@@ -4,6 +4,7 @@ namespace Poker.GameReader.Reporters;
 
 public struct StrategyData
 {
+    public double HandEquity { get; set; }
     public double Call { get; init; }
     public double Fold { get; init; }
     public Dictionary<string, double> PostFlopHandChances { get; set; }
@@ -13,6 +14,8 @@ public struct StrategyData
     public double MaxBet { get; set; }
 
     public double MinBet { get; set; }
+
+    public double EvBet { get; set; }
 
     public StrategyData()
     {

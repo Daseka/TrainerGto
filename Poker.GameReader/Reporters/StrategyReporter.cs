@@ -5,16 +5,17 @@ using System.Text;
 
 namespace Poker.GameReader.Reporters;
 
-public class StrategyReporter
+public class StrategyReporter : IStrategyReporter
 {
-    private const string NoStrategy = "No Strategy";
     private const double CrushEmFactor = 3;
+    private const int DefaultPlayPercentage = 50;
+    private const string NoStrategy = "No Strategy";
     private const double PokeEmFactor = 1.5;
-    private const int DefaultPlayPercentage = 23;
-    private int _lastPick;
-    private StrategyData _lastStrategyData;
-    private GameData _previousGameData;
-
+    private static Dictionary<ulong, double> _handEquityIndex = StartingHand
+        .ReadStartingHands()
+        .Select(x => (HandToKey(x.Item1), x.Item2))
+        .ToDictionary((key) => key.Item1, (value) => value.Item2);
+    private readonly IHandSimulator _handSimulator;
     private readonly Dictionary<Position, int> _positionalPreflopRaises = new()
     {
         {Position.None, 0 },
@@ -25,6 +26,14 @@ public class StrategyReporter
         {Position.BigBlind, 12 },
         {Position.SmallBlind, 3 },
     };
+    private int _lastPick;
+    private StrategyData _lastStrategyData;
+    private GameData _previousGameData;
+
+    public StrategyReporter(IHandSimulator handSimulator)
+    {
+        _handSimulator = handSimulator;
+    }
 
     public async Task<StrategyData> GetStrategy(GameData gameData)
     {
@@ -35,6 +44,26 @@ public class StrategyReporter
         return strategyData;
     }
 
+    private static double GetHandEquity(GameData gameData)
+    {
+        if (gameData.HandCards == null || gameData.HandCards.Any(x => x.cardRank == 0 || x.cardRank == 0))
+        {
+            return 0;
+        }
+
+        ulong key = HandToKey([.. gameData.HandCards.Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit))]);
+
+        return key == 0 ? 0 : _handEquityIndex[key];
+    }
+
+    private static ulong HandToKey((Rank, Suit)[] hand)
+    {
+        ulong card1 = (0x1UL << (int)hand[0].Item1) << (13 * ((int)hand[0].Item2 - 1));
+        ulong card2 = (0x1UL << (int)hand[1].Item1) << (13 * ((int)hand[1].Item2 - 1));
+
+        return card1 + card2;
+    }
+
     private static bool IsAfterFlop(GameData gameData)
     {
         return gameData.CommunityCards[0] != (CardRank.None, CardSuit.None)
@@ -42,31 +71,27 @@ public class StrategyReporter
             || gameData.CommunityCards[2] != (CardRank.None, CardSuit.None);
     }
 
-    private static async Task<StrategyData> RunWinChanceSimulation(GameData gameData)
+    private static async Task<StrategyData> RunWinChanceSimulation(GameData gameData, IHandSimulator handSimulator)
     {
-        var strategyData = new StrategyData();
-        var handSimulator = new HandSimulator(12345);
-
-        IEnumerable<(Rank, Suit)> knownCards = gameData.HandCards
-            .Concat(gameData.CommunityCards)
-            .Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
-
         var handCards = gameData.HandCards.Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
         var villains = gameData.VillainsPlaying.Where(x => x).Select(x => DefaultPlayPercentage);
         var communityCards = gameData.CommunityCards
             .Where(x => x.cardSuit != (int)Suit.None)
             .Select(x => ((Rank)x.cardRank, (Suit)x.cardSuit));
 
-        var (win, draw, loss) = await handSimulator.SimulateWinChance([.. handCards], [.. villains], [.. communityCards]);
+        //var (win, draw, loss) = await handSimulator.SimulateWinChance([.. handCards], [.. villains], [.. communityCards]);
+        var (win, draw, loss) = await handSimulator.SimulateWinChanceOld([.. handCards], [.. villains], [.. communityCards]);
 
-        strategyData.PostFlopHandChances = new Dictionary<string, double>
+        return new StrategyData
         {
-            { "Win", win},
-            { "Draw", draw},
-            { "Loss", loss},
+            PostFlopHandChances = new Dictionary<string, double>
+            {
+                { "Win", win},
+                { "Draw", draw},
+                { "Loss", loss},
+            },
+            HandEquity = GetHandEquity(gameData),
         };
-
-        return strategyData;
     }
 
     private async Task<StrategyData> GetPostFlopStrategy(GameData gameData)
@@ -83,25 +108,14 @@ public class StrategyReporter
         if (HaveCommunityCardsChanged(gameData))
         {
             _previousGameData = gameData;
-            _lastStrategyData = await RunWinChanceSimulation(gameData);
+            _lastStrategyData = await RunWinChanceSimulation(gameData, _handSimulator);
 
             var sugestion = new StringBuilder();
             foreach (var hand in _lastStrategyData.PostFlopHandChances.OrderByDescending(x => x.Value))
             {
-                if (hand.Value == 0)
-                {
-                    continue;
-                }
-
                 sugestion.AppendLine($"{hand.Key,6} {hand.Value,5:F2}%");
-
-                if (hand.Value == 1)
-                {
-                    // no need to show made hands only top hand
-                    break;
-                }
             }
-                        
+
             _lastStrategyData.SugestedAction = sugestion.Length == 0
                 ? NoStrategy
                 : sugestion.ToString();
@@ -111,13 +125,15 @@ public class StrategyReporter
         {
             double winChance = value;
             double lossChance = 100 - winChance;
-            _lastStrategyData.MaxBet = (winChance/100 * gameData.PotTotal); //((winChance * gameData.PotTotal) / lossChance) ;
-            _lastStrategyData.MinBet = Math.Max(0, _lastStrategyData.MaxBet - (lossChance/100 * _lastStrategyData.MaxBet));
+            _lastStrategyData.MaxBet = (winChance / 100 * gameData.PotTotal);
+            _lastStrategyData.MinBet = Math.Max(0, _lastStrategyData.MaxBet - (lossChance / 100 * _lastStrategyData.MaxBet));
+            _lastStrategyData.EvBet = (winChance / 100 * gameData.PotTotal) - (gameData.Bets.Max() * lossChance / 100);
         }
         else
         {
             _lastStrategyData.MaxBet = 0;
             _lastStrategyData.MinBet = 0;
+            _lastStrategyData.EvBet = 0;
         }
 
         //clear cached preflop data since nolonger relevant
@@ -159,10 +175,10 @@ public class StrategyReporter
         string suggestion;
         double maxBetAmount = 0;
         double minBetAmount = 0;
+        double callAmount = gameData.Bets.Max();
         if (gameData.Position == Position.BigBlind && !gameData.HasBeenRaised)
         {
             suggestion = " CHECK";
-
         }
         else if (_lastPick == 0)
         {
@@ -177,14 +193,14 @@ public class StrategyReporter
         else if (_lastPick <= call + raise)
         {
             suggestion = $"{onlyAThought} RAISE (roll {_lastPick})";
-            maxBetAmount = Math.Max(0, (CrushEmFactor * (gameData.CallAmount - gameData.BigBlind)) 
+            maxBetAmount = Math.Max(0, (CrushEmFactor * (callAmount - gameData.BigBlind))
                 + _positionalPreflopRaises[gameData.Position] * gameData.BigBlind);
             minBetAmount = Math.Min(maxBetAmount, gameData.BigBlind * 2 + gameData.CallAmount);
         }
         else
         {
             suggestion = $"{onlyAThought} FOLD (roll {_lastPick})";
-            maxBetAmount = Math.Max(0,(PokeEmFactor * (gameData.CallAmount - gameData.BigBlind)) 
+            maxBetAmount = Math.Max(0, (PokeEmFactor * (callAmount - gameData.BigBlind))
                 + _positionalPreflopRaises[gameData.Position] * gameData.BigBlind);
             minBetAmount = -1;
         }
@@ -197,6 +213,8 @@ public class StrategyReporter
             SugestedAction = suggestion,
             MaxBet = maxBetAmount,
             MinBet = minBetAmount,
+            EvBet = minBetAmount,
+            HandEquity = GetHandEquity(gameData),
         };
 
         //clear cached postflop data since nolonger relevant

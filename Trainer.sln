@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poker.GtoBuilder", "Poker.G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poker.Common", "Poker.Common\Poker.Common.csproj", "{60BF887D-299F-4B6A-BFDD-3C0E8521A45B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandEvaluator", "HandEvaluator\HandEvaluator.csproj", "{17DCDFC6-1C27-40B8-8F67-F1F26688B752}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{60BF887D-299F-4B6A-BFDD-3C0E8521A45B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60BF887D-299F-4B6A-BFDD-3C0E8521A45B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60BF887D-299F-4B6A-BFDD-3C0E8521A45B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17DCDFC6-1C27-40B8-8F67-F1F26688B752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17DCDFC6-1C27-40B8-8F67-F1F26688B752}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17DCDFC6-1C27-40B8-8F67-F1F26688B752}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17DCDFC6-1C27-40B8-8F67-F1F26688B752}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

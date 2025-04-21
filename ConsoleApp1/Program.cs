@@ -1,10 +1,23 @@
-﻿using GtoTrainer.Trainers;
-using Poker.GameReader.Reporters;
+﻿using GtoTrainer;
+using GtoTrainer.Trainers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 internal class Program
 {
-    public async static Task Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        await ConsoleTrainer.RunConsoleTrainer();
+        await Start();
+    }
+
+    private static async Task Start()
+    {
+        var host = new HostBuilder()
+                    .AddStartup<Startup>()
+                    .Build();
+
+        var consoleTrainer = host.Services.GetRequiredService<IConsoleTrainer>();
+
+        await consoleTrainer.RunTrainer();
     }
 }

@@ -17,12 +17,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HandEvaluator\HandEvaluator.csproj" />
     <ProjectReference Include="..\Poker.GameReader\Poker.GameReader.csproj" />
     <ProjectReference Include="..\Poker.GtoBuilder\Poker.GtoBuilder.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="HandEvaluators\" />
   </ItemGroup>
 
 </Project>
