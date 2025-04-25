@@ -1,4 +1,4 @@
-﻿namespace Poker.GameReader.Reporters;
+﻿namespace Poker.Common;
 
 public enum Position
 {

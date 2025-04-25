@@ -1,4 +1,5 @@
-﻿using Poker.GameReader.Reporters;
+﻿using Poker.Common;
+using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
 
 namespace Tests.Strategies;

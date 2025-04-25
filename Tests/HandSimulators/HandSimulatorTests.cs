@@ -1,6 +1,7 @@
 ﻿using HandEvaluator;
 using Poker.Common;
 using Poker.GtoBuilder;
+using Poker.GtoBuilder.GameSims;
 using System.Diagnostics;
 
 namespace Tests.HandSimulators;
@@ -71,8 +72,8 @@ public class HandSimulatorTests
         long hero = x.ScoreHand(heroCards, communityCards);
         long vill = x.ScoreHand(villCards, communityCards);
 
-        var heroHand = Hand.DescriptionFromHandValueInternal((uint)hero);
-        var villHand = Hand.DescriptionFromHandValueInternal((uint)vill);
+        var heroHand = HandEvaluator.Hand.DescriptionFromHandValueInternal((uint)hero);
+        var villHand = HandEvaluator.Hand.DescriptionFromHandValueInternal((uint)vill);
 
 
         Assert.True(hero > vill);
@@ -123,43 +124,20 @@ public class HandSimulatorTests
     [Fact]
     public async Task bla2()
     {
-        int i = 0;
-        int count = 0;
-        var taskFactory = new TaskFactory();
-        const int startingSeed = 123;
-        int seed = startingSeed;
+        var sim = new GameSimulator(new FastDeckBuilder(), new HandSimulator(new FastDeckBuilder(), new HandScorer()));
 
-        const int size = 10;
-        var threads = new Task<int>[size];
-        while (count < size)
+        var gameState = new GameState
         {
-            threads[i] = taskFactory
-                .StartNew(() =>
-                {
-                    var random = new Random(++seed);
+            HeroCards = [(Rank.Ace, Suit.Diamond), (Rank.Ace, Suit.Hart)],
+            Bets = [0, 0, 0, 0, 0.01, 0.02],
+            BigBlind = 0.02,
+            SmallBlind = 0.01,
+            CommunityCards = [(Rank.Ten, Suit.Diamond), (Rank.Jack, Suit.Club), (Rank.King, Suit.Club)],
+            HeroPosition = Position.UnderTheGun,
+            PotTotal = 0.03,
+            TotalPlayersPlaying = [true, true, true, true, true, true]
+        };
 
-                    return random.Next(100);
-                });
-
-            count++;
-            i++;
-        }
-
-        var results = await Task.WhenAll(threads);
-
-        i = 0;
-        seed = startingSeed;
-        count = 0;
-        var nums = new int[size];
-        while (count < size)
-        {
-            var deck = new Random(++seed);
-            nums[i] = deck.Next(100);
-
-            count++;
-            i++;
-        }
-
-        Assert.True(results.Sum() == nums.Sum());
+        var result = await sim.SimulateGame(gameState, 0);
     }
 }

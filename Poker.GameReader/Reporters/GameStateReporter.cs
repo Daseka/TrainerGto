@@ -1,4 +1,5 @@
-﻿using Poker.GameReader.ImageHashing;
+﻿using Poker.Common;
+using Poker.GameReader.ImageHashing;
 using Poker.GameReader.ScreenUtilities;
 using System.Drawing;
 using System.Text;

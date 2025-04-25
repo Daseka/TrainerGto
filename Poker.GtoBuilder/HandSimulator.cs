@@ -11,11 +11,12 @@ public class HandSimulator : IHandSimulator
     private const int Precission = 2;
     private readonly IDeckBuilder _deckBuilder;
     private readonly IHandScorer _handScorer;
-    private readonly (Rank, Suit)[][] _startingHandList = StartingHand
-        .ReadStartingHands()
-        .OrderByDescending(x => x.Item2)
-        .Select(x => x.Item1)
-        .ToArray();
+    private readonly (Rank, Suit)[][] _startingHandList = [];
+    //private readonly (Rank, Suit)[][] _startingHandList = StartingHand
+    //    .ReadStartingHands()
+    //    .OrderByDescending(x => x.Item2)
+    //    .Select(x => x.Item1)
+    //    .ToArray();
 
     public int? Seed { get; set; }
 
@@ -77,6 +78,11 @@ public class HandSimulator : IHandSimulator
         int[] villainHandRanges,
         (Rank, Suit)[] communityCards)
     {
+        if (villainHandRanges.Length == 0)
+        {
+            return (100, 0, 0);
+        }
+
         double wins = 0;
         double draws = 0;
         double loss = 0;

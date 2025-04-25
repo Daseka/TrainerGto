@@ -99,7 +99,7 @@ public class FastDeck : IDeck
 
     public FastDeck(int? seed = null)
     {
-        _randomizer = seed is null
+        _randomizer = seed is null || seed == 0
             ? new Random()
             : new Random(seed.Value);
 
@@ -120,7 +120,7 @@ public class FastDeck : IDeck
 
     public bool CanDeal((Rank, Suit) cardToDeal)
     {
-        var cardHex = CardToHex(cardToDeal);
+        var cardHex = CardToHex(cardToDeal, _suitToShift, _rankToHex);
 
         return (_cards & cardHex) > 0;
     }
@@ -169,7 +169,7 @@ public class FastDeck : IDeck
 
         cardDealt = cardToDeal;
         // We are using XOR to remove the card from the deck
-        _cards ^= CardToHex(cardToDeal);
+        _cards ^= CardToHex(cardToDeal, _suitToShift, _rankToHex);
 
         return true;
     }
@@ -179,21 +179,8 @@ public class FastDeck : IDeck
         throw new NotImplementedException();
     }
 
-    private ulong CardToHex((Rank rank, Suit suit) cardToDeal)
+    private static ulong CardToHex((Rank rank, Suit suit) cardToDeal, int[] suitToShift, ulong[] rankToHex)
     {
-        return _rankToHex[(int)cardToDeal.rank] << _suitToShift[(int)cardToDeal.suit];
-    }
-
-    private (Rank, Suit) HexToCard(ulong mask)
-    {
-        for (int i = 51; i >= 0; i--)
-        {
-            if ((1UL << i & mask) != 0)
-            {
-                return _indexToCard[i];
-            }
-        }
-
-        throw new ArgumentException("shouldnt reach here");
+        return rankToHex[(int)cardToDeal.rank] << suitToShift[(int)cardToDeal.suit];
     }
 }

@@ -1,7 +1,5 @@
 ﻿using HandEvaluator;
-using Poker.Common;
-using Poker.GtoBuilder;
-using System.Diagnostics;
+using Poker.GtoBuilder.GameSims;
 
 namespace Tests;
 
@@ -24,7 +22,7 @@ public class HandEvaluatorTest
 
         long total = 0;
 
-        Hand.HandOdds(pocketCards, board, string.Empty, wins, ties, loss, ref total);
+        HandEvaluator.Hand.HandOdds(pocketCards, board, string.Empty, wins, ties, loss, ref total);
 
         for (int i = 0; i < pocketCards.Length; i++)
         {

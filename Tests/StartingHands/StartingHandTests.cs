@@ -1,4 +1,5 @@
 ﻿using Poker.GtoBuilder;
+using Poker.GtoBuilder.GameSims;
 using System.Diagnostics;
 
 namespace Tests.StartingHands;
@@ -26,6 +27,20 @@ public class StartingHandTests
         var sorted = result
             .OrderByDescending(x => x.Item2)
             .ToList();
+
+
+        sw.Stop();
+        var time = sw.Elapsed.TotalSeconds;
+    }
+
+    [Fact]
+    public async Task Bla4()
+    {
+        var something = new StartingHand(new HandSimulator(new FastDeckBuilder(), new FastHandScorer()));
+        var sw = Stopwatch.StartNew();
+
+        var result = await something.SaveStartingHands();
+        
 
 
         sw.Stop();

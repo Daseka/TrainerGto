@@ -1,4 +1,5 @@
-﻿using Poker.GameReader.Reporters;
+﻿using Poker.Common;
+using Poker.GameReader.Reporters;
 using Poker.GameReader.Strategies;
 
 namespace Tests.Strategies
@@ -6,14 +7,155 @@ namespace Tests.Strategies
     public class ButtonTests
     {
         [Fact]
-        public void WhenHasKingsHasNotBeenRaised()
+        public void WhenHasAceTenOffsuitBeenRaised()
         {
             var gameData = new GameData
             {
                 HandCards =
                 [
-                    (CardRank.King,CardSuit.Hart),
-                    (CardRank.King,CardSuit.Club)
+                    (CardRank.Ace,CardSuit.Diamond),
+                    (CardRank.Ten,CardSuit.Club)
+                ],
+                Position = Position.Button,
+                Bets = [1, 2, 3, 0, 0]
+            };
+
+            var button = new Button();
+            var result = button.Solve(gameData);
+
+            var expected = new StrategySolution
+            {
+                Fold = 1,
+                Raise = 0,
+                Call = 0,
+            };
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void WhenHasAceTenOffsuitNotBeenRaised()
+        {
+            var gameData = new GameData
+            {
+                SmallBlind = 1,
+                BigBlind = 2,
+                HandCards =
+                [
+                    (CardRank.Ace,CardSuit.Diamond),
+                    (CardRank.Ten,CardSuit.Club)
+                ],
+                Position = Position.Button,
+                Bets = [1, 2, 0, 0, 0]
+            };
+
+            var button = new Button();
+            var result = button.Solve(gameData);
+
+            var expected = new StrategySolution
+            {
+                Fold = 0,
+                Raise = 1,
+                Call = 0,
+            };
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void WhenHasFoursBeenRaised()
+        {
+            var gameData = new GameData
+            {
+                HandCards =
+                [
+                    (CardRank.Four,CardSuit.Hart),
+                    (CardRank.Four,CardSuit.Club)
+                ],
+                Position = Position.Button,
+                Bets = [1, 2, 3, 0, 0]
+            };
+
+            var button = new Button();
+            var result = button.Solve(gameData);
+
+            var expected = new StrategySolution
+            {
+                Fold = 0.78,
+                Raise = 0.0,
+                Call = 0.22,
+            };
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void WhenHasFoursNotBeenRaised()
+        {
+            var gameData = new GameData
+            {
+                SmallBlind = 1,
+                BigBlind = 2,
+                HandCards =
+                [
+                    (CardRank.Four,CardSuit.Hart),
+                    (CardRank.Four,CardSuit.Club)
+                ],
+                Position = Position.Button,
+                Bets = [1, 2, 0, 0, 0]
+            };
+
+            var button = new Button();
+            var result = button.Solve(gameData);
+
+            var expected = new StrategySolution
+            {
+                Fold = 0.0,
+                Raise = 1.0,
+                Call = 0.0,
+            };
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void WhenHasKingJackOffsuitBeenRaised()
+        {
+            var gameData = new GameData
+            {
+                HandCards =
+                [
+                    (CardRank.King,CardSuit.Diamond),
+                    (CardRank.Jack,CardSuit.Club)
+                ],
+                Position = Position.Button,
+                Bets = [1, 2, 3, 0, 0]
+            };
+
+            var button = new Button();
+            var result = button.Solve(gameData);
+
+            var expected = new StrategySolution
+            {
+                Fold = 0.90,
+                Raise = 0.10,
+                Call = 0,
+            };
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void WhenHasKingJackOffsuitNotBeenRaised()
+        {
+            var gameData = new GameData
+            {
+                SmallBlind = 1,
+                BigBlind = 2,
+                HandCards =
+                [
+                    (CardRank.King,CardSuit.Diamond),
+                    (CardRank.Jack,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
@@ -60,16 +202,14 @@ namespace Tests.Strategies
         }
 
         [Fact]
-        public void WhenHasFoursNotBeenRaised()
+        public void WhenHasKingsHasNotBeenRaised()
         {
             var gameData = new GameData
             {
-                SmallBlind = 1,
-                BigBlind = 2,
                 HandCards =
                 [
-                    (CardRank.Four,CardSuit.Hart),
-                    (CardRank.Four,CardSuit.Club)
+                    (CardRank.King,CardSuit.Hart),
+                    (CardRank.King,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
@@ -80,62 +220,8 @@ namespace Tests.Strategies
 
             var expected = new StrategySolution
             {
-                Fold = 0.0,
-                Raise = 1.0,
-                Call = 0.0,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasFoursBeenRaised()
-        {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.Four,CardSuit.Hart),
-                    (CardRank.Four,CardSuit.Club)
-                ],
-                Position = Position.Button,
-                Bets = [1, 2, 3, 0, 0]
-            };
-
-            var button = new Button();
-            var result = button.Solve(gameData);
-
-            var expected = new StrategySolution
-            {
-                Fold = 0.78,
-                Raise = 0.0,
-                Call = 0.22,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasSevenFourSuitedNotBeenRaised()
-        {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.Seven,CardSuit.Club),
-                    (CardRank.Four,CardSuit.Club)
-                ],
-                Position = Position.Button,
-                Bets = [1, 2, 0, 0, 0]
-            };
-
-            var button = new Button();
-            var result = button.Solve(gameData);
-
-            var expected = new StrategySolution
-            {
-                Fold = 1,
-                Raise = 0,
+                Fold = 0,
+                Raise = 1,
                 Call = 0,
             };
 
@@ -170,47 +256,17 @@ namespace Tests.Strategies
         }
 
         [Fact]
-
-        public void WhenHasAceTenOffsuitNotBeenRaised()
+        public void WhenHasSevenFourSuitedNotBeenRaised()
         {
             var gameData = new GameData
             {
-                SmallBlind = 1,
-                BigBlind = 2,
                 HandCards =
                 [
-                    (CardRank.Ace,CardSuit.Diamond),
-                    (CardRank.Ten,CardSuit.Club)
+                    (CardRank.Seven,CardSuit.Club),
+                    (CardRank.Four,CardSuit.Club)
                 ],
                 Position = Position.Button,
                 Bets = [1, 2, 0, 0, 0]
-            };
-
-            var button = new Button();
-            var result = button.Solve(gameData);
-
-            var expected = new StrategySolution
-            {
-                Fold = 0,
-                Raise = 1,
-                Call = 0,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasAceTenOffsuitBeenRaised()
-        {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.Ace,CardSuit.Diamond),
-                    (CardRank.Ten,CardSuit.Club)
-                ],
-                Position = Position.Button,
-                Bets = [1, 2, 3, 0, 0]
             };
 
             var button = new Button();
@@ -220,62 +276,6 @@ namespace Tests.Strategies
             {
                 Fold = 1,
                 Raise = 0,
-                Call = 0,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasKingJackOffsuitNotBeenRaised()
-        {
-            var gameData = new GameData
-            {
-                SmallBlind = 1,
-                BigBlind = 2,
-                HandCards =
-                [
-                    (CardRank.King,CardSuit.Diamond),
-                    (CardRank.Jack,CardSuit.Club)
-                ],
-                Position = Position.Button,
-                Bets = [1, 2, 0, 0, 0]
-            };
-
-            var button = new Button();
-            var result = button.Solve(gameData);
-
-            var expected = new StrategySolution
-            {
-                Fold = 0,
-                Raise = 1,
-                Call = 0,
-            };
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
-        public void WhenHasKingJackOffsuitBeenRaised()
-        {
-            var gameData = new GameData
-            {
-                HandCards =
-                [
-                    (CardRank.King,CardSuit.Diamond),
-                    (CardRank.Jack,CardSuit.Club)
-                ],
-                Position = Position.Button,
-                Bets = [1, 2, 3, 0, 0]
-            };
-
-            var button = new Button();
-            var result = button.Solve(gameData);
-
-            var expected = new StrategySolution
-            {
-                Fold = 0.90,
-                Raise = 0.10,
                 Call = 0,
             };
 

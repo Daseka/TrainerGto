@@ -1,4 +1,6 @@
-﻿namespace Poker.GameReader.Reporters;
+﻿using Poker.Common;
+
+namespace Poker.GameReader.Reporters;
 
 public readonly struct GameData
 {
@@ -10,7 +12,6 @@ public readonly struct GameData
     public (int cardRank, int cardSuit)[] HandCards { get; init; }
     public bool HasBeenRaised => Bets.Max() > BigBlind;
     public Position Position { get; init; }
-    public double PotOdds => Math.Round(CallAmount / (CallAmount + PotTotal), 2);
     public double PotTotal { get; init; }
     public double SmallBlind { get; init; }
 }
