@@ -30,8 +30,8 @@ public class FourOfAKindTest
             (Rank.Seven, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= FourOfAKindValue && heroScore < StraightFlushValue);
@@ -61,8 +61,8 @@ public class FourOfAKindTest
             (Rank.Six, Suit.Spade),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= FourOfAKindValue && heroScore < StraightFlushValue);
@@ -92,8 +92,8 @@ public class FourOfAKindTest
             (Rank.Seven, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore == villainScore);
         Assert.True(heroScore >= FourOfAKindValue && heroScore < StraightFlushValue);
@@ -123,8 +123,8 @@ public class FourOfAKindTest
             (Rank.Seven, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore == villainScore);
         Assert.True(heroScore >= FourOfAKindValue && heroScore < StraightFlushValue);

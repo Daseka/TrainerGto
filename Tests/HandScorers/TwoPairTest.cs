@@ -30,8 +30,8 @@ public class TwoPairTest
             (Rank.Four, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= TwoPairValue && heroScore < ThreeOfAKindValue);
@@ -61,8 +61,8 @@ public class TwoPairTest
             (Rank.Four, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= TwoPairValue && heroScore < ThreeOfAKindValue);
@@ -92,8 +92,8 @@ public class TwoPairTest
             (Rank.Four, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= TwoPairValue && heroScore < ThreeOfAKindValue);
@@ -123,8 +123,8 @@ public class TwoPairTest
             (Rank.Four, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore == villainScore);
         Assert.True(heroScore >= TwoPairValue && heroScore < ThreeOfAKindValue);
@@ -154,8 +154,8 @@ public class TwoPairTest
             (Rank.Four, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore == villainScore);
         Assert.True(heroScore >= TwoPairValue && heroScore < ThreeOfAKindValue);

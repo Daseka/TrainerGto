@@ -30,8 +30,8 @@ public class FullHouseTest
             (Rank.Three, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= FullHouseValue && heroScore < FourOfAKindValue);
@@ -61,8 +61,8 @@ public class FullHouseTest
             (Rank.Three, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= FullHouseValue && heroScore < FourOfAKindValue);
@@ -92,8 +92,8 @@ public class FullHouseTest
             (Rank.Three, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore == villainScore);
         Assert.True(heroScore >= FullHouseValue && heroScore < FourOfAKindValue);
@@ -123,8 +123,8 @@ public class FullHouseTest
             (Rank.Five, Suit.Spade),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore == villainScore);
         Assert.True(heroScore >= FullHouseValue && heroScore < FourOfAKindValue);

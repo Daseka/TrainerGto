@@ -3,7 +3,7 @@ using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
 namespace Poker.GameReader.ScreenUtilities;
 
-internal class ScreenGrabber
+internal class ScreenGrabber : IScreenGrabber
 {
     public Bitmap GrabScreenBlock(int sourceX, int sourceY, int width, int height)
     {

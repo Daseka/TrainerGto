@@ -5,14 +5,22 @@ using System.Text;
 
 namespace GtoTrainer.Trainers;
 
-internal class ConsoleTrainer
+internal class ConsoleTrainer : IConsoleTrainer
 {
     const int Seconds = 2;
     private static readonly string[] WindowNames = ["NLH", "Rush"];
+    private readonly IGameStateReporter _gameStateReporter;
+    private readonly IStrategyReporter _strategyReporter;
 
-    public static Task RunConsoleTrainer()
+    public ConsoleTrainer(IGameStateReporter gameStateReporter, IStrategyReporter strategyReporter)
     {
-        StartAnalysisOnTimer(Seconds);
+        _gameStateReporter = gameStateReporter;
+        _strategyReporter = strategyReporter;
+    }
+
+    public async Task RunTrainer()
+    {
+        await StartAnalysisOnTimer(Seconds);
 
         do
         {
@@ -22,12 +30,10 @@ internal class ConsoleTrainer
                 Console.WriteLine($"Quiting...");
                 break;
             }
-            GameStateReporter gameStateReporter = new();
-            var strategyReporter = new StrategyReporter();
-            PrintGameStateReport(gameStateReporter, strategyReporter);
+            await PrintGameStateReport(_gameStateReporter, _strategyReporter);
         } while (true);
 
-        return Task.CompletedTask;
+        return;
     }
 
     private static string GetCardString((int cardRank, int cardSuit) middleCard)
@@ -52,7 +58,7 @@ internal class ConsoleTrainer
         return stringBuilder.ToString();
     }
 
-    private static Task PrintGameStateReport(GameStateReporter gameStateReporter, StrategyReporter strategyReporter)
+    private static async Task PrintGameStateReport(IGameStateReporter gameStateReporter, IStrategyReporter strategyReporter)
     {
         Stopwatch stopwatch = new();
         stopwatch.Restart();
@@ -60,52 +66,50 @@ internal class ConsoleTrainer
         if (!gameStateReporter.ConnectToGame(WindowNames))
         {
             Console.WriteLine($"No window found starting with: {string.Join(",", WindowNames)}");
-            return Task.CompletedTask;
+            return;
         }
 
-        GameData gameData = gameStateReporter.GetGameState();
-        StrategyData strategyData = strategyReporter.GetStrategy(gameData);
+        GameData gameData = await gameStateReporter.GetGameState();
+        StrategyData strategyData = await strategyReporter.GetStrategy(gameData);
 
         Console.Clear();
 
         Console.WriteLine($"{Environment.NewLine}=== Playing ===");
         string stillPlaying = GetFoldedList(gameData);
         Console.WriteLine(stillPlaying);
-
-        Console.WriteLine($"{Environment.NewLine}=== Bet amounts ===");
-        Console.WriteLine(string.Join(' ', gameData.Bets));
-
-        Console.WriteLine($"{Environment.NewLine}================");
-
-        WritePercentageLine(strategyData);
-        Console.WriteLine($"been raised: {gameData.HasBeenRaised}");
+        Console.WriteLine($"Raised: {gameData.HasBeenRaised}");
 
         Console.ForegroundColor = ConsoleColor.Magenta;
         string leftCard = GetCardString(gameData.HandCards[0]);
         string rightCard = GetCardString(gameData.HandCards[1]);
         Console.WriteLine($"{leftCard} {Environment.NewLine}{rightCard}");
-
-        if (gameData.PotOdds > 0)
-        {
-            Console.ForegroundColor = gameData.PotOdds <= 0.32
-                ? ConsoleColor.Green
-                : ConsoleColor.DarkRed;
-            Console.WriteLine($"{Environment.NewLine}Pot Odds: {gameData.PotOdds * 100}%");
-        }
+        Console.ForegroundColor = ConsoleColor.Green;
+        string equity = GetEquityString(strategyData);
+        Console.WriteLine(equity);
 
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}{strategyData.SugestedAction}");
         Console.ResetColor();
+
+        Console.WriteLine($"{Environment.NewLine}=== Bet amount ===");
+        WriteBetAmountLine(strategyData, gameData);
 
         Console.WriteLine($"{Environment.NewLine}================");
 
         stopwatch.Stop();
         Console.WriteLine($"--Time: {stopwatch.Elapsed.TotalSeconds}--");
 
-        return Task.CompletedTask;
+        return;
     }
 
-    private static Task<System.Timers.Timer> StartAnalysisOnTimer(int seconds)
+    private static string GetEquityString(StrategyData strategyData)
+    {
+        return strategyData.HandEquity > 0
+            ? $"EQ = {strategyData.HandEquity}%"
+            : string.Empty;
+    }
+
+    private Task<System.Timers.Timer> StartAnalysisOnTimer(int seconds)
     {
         var timer = new System.Timers.Timer
         {
@@ -113,14 +117,11 @@ internal class ConsoleTrainer
             AutoReset = false
         };
 
-        var gameStateReporter = new GameStateReporter();
-        var strategyReporter = new StrategyReporter();
-
         timer.Elapsed += (o, e) =>
         {
             if (o is System.Timers.Timer callingTimer)
             {
-                PrintGameStateReport(gameStateReporter, strategyReporter);
+                PrintGameStateReport(_gameStateReporter, _strategyReporter).GetAwaiter().GetResult();
                 callingTimer.Start();
             }
         };
@@ -128,6 +129,47 @@ internal class ConsoleTrainer
         timer.Start();
 
         return Task.FromResult(timer);
+    }
+
+    private static void WriteBetAmountLine(StrategyData strategyData, GameData gameData)
+    {
+        if (strategyData.MaxBet != 0)
+        {
+            Console.ForegroundColor = strategyData.Fold > strategyData.Raise && strategyData.Fold > strategyData.Call
+                ? ConsoleColor.DarkGreen
+                : ConsoleColor.Green;
+            Console.WriteLine($"{Environment.NewLine}Max bet amount {Math.Round(strategyData.MaxBet, 2):f2} ");
+
+            string minBet = strategyData.MinBet > 0
+                ? Math.Round(strategyData.MinBet, 2).ToString()
+                : "Fold";
+
+            Console.ForegroundColor = strategyData.Fold > strategyData.Raise && strategyData.Fold > strategyData.Call
+                ? ConsoleColor.Green
+                : ConsoleColor.DarkGreen;
+            Console.WriteLine($"Min bet amout {minBet:f2} ");
+
+            string evBet = strategyData.EvBet > 0
+                ? Math.Round(strategyData.EvBet, 2).ToString()
+                : "Fold";
+
+            Console.ForegroundColor = strategyData.Fold > strategyData.Raise && strategyData.Fold > strategyData.Call
+                ? ConsoleColor.Green
+                : ConsoleColor.DarkGreen;
+            Console.WriteLine($"EV bet amout {evBet:f2} ");
+        }
+        else if (gameData.HandCards[0].cardRank != (int)Rank.None)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{Environment.NewLine} Check");
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine($"{Environment.NewLine}No bet amount");
+        }
+
+        Console.ResetColor();
     }
 
     private static void WritePercentageLine(StrategyData strategyData)

@@ -4,9 +4,9 @@ using Poker.Common.Hands;
 
 namespace Poker.GtoBuilder;
 
-public class HandScorer
+public class HandScorer : IHandScorer
 {
-    public static long ScoreHand((Rank rank, Suit suit)[] handCards, (Rank, Suit)[] communityCards)
+    public long ScoreHand((Rank rank, Suit suit)[] handCards, (Rank, Suit)[] communityCards)
     {
         long score = 0;
         (Rank rank, Suit suit)[] hand = [.. handCards, .. communityCards];
@@ -33,15 +33,15 @@ public class HandScorer
         }
         else if (TryScoreThreeOfAKind(hand, out long threeOfAKind))
         {
-            score = threeOfAKind ;
+            score = threeOfAKind;
         }
         else if (TryScoreTwoPair(hand, out long twoPair))
         {
-            score = twoPair ;
+            score = twoPair;
         }
         else if (TryScorePair(hand, out long pair))
         {
-            score = pair ;
+            score = pair;
         }
         else if (TryScoreHighCard(hand, out long highCard))
         {

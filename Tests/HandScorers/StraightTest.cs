@@ -30,8 +30,8 @@ public class StraightTest
             (Rank.Three, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= StraightValue && heroScore < FlushValue);
@@ -61,8 +61,8 @@ public class StraightTest
             (Rank.Nine, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= StraightValue && heroScore < FlushValue);
@@ -92,8 +92,8 @@ public class StraightTest
             (Rank.Five, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore > villainScore);
         Assert.True(heroScore >= StraightValue && heroScore < FlushValue);
@@ -123,8 +123,8 @@ public class StraightTest
             (Rank.Five, Suit.Hart),
         };
 
-        var heroScore = HandScorer.ScoreHand(hero, community);
-        var villainScore = HandScorer.ScoreHand(villain, community);
+        var heroScore = new HandScorer().ScoreHand(hero, community);
+        var villainScore = new HandScorer().ScoreHand(villain, community);
 
         Assert.True(heroScore == villainScore);
         Assert.True(heroScore >= StraightValue && heroScore < FlushValue);
